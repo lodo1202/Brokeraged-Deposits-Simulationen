@@ -1,34 +1,726 @@
-# Brokered Deposits – Interaktive Simulation
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brokered Deposits | HWZ Vertiefungsseminar</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#EEF2FF;--surface:#fff;--card:#fff;
+  --border:#DBEAFE;--border2:#BFDBFE;
+  --navy:#1E3A8A;--blue:#2563EB;--light-blue:#EFF6FF;
+  --green:#059669;--amber:#D97706;--red:#DC2626;
+  --green-bg:#ECFDF5;--amber-bg:#FFFBEB;--red-bg:#FEF2F2;
+  --text:#0F172A;--muted:#64748B;--dim:#CBD5E1;
+  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -1px rgba(0,0,0,.05);
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;font-size:15px}
 
-Interaktives Präsentationstool zum Thema **Brokered Deposits – Darstellung des Marktes und der Auswirkungen in Europa**.
+/* ── Header ── */
+.hdr{background:var(--navy);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:200}
+.hdr-left{display:flex;align-items:center;gap:14px}
+.hwz{background:#fff;color:var(--navy);font-family:var(--mono);font-weight:700;font-size:13px;padding:4px 11px;border-radius:5px;letter-spacing:.04em}
+.hdr-title{color:#fff;font-size:15px;font-weight:700}
+.hdr-sub{color:#93C5FD;font-size:11px;font-family:var(--mono);margin-top:1px}
 
-Erstellt im Rahmen des Vertiefungsseminars · HWZ Hochschule für Wirtschaft Zürich · Major Banking & Finance.
+/* ── Nav ── */
+.nav{display:flex;gap:4px}
+.nb{font-family:var(--font);font-size:12px;font-weight:600;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);transition:all .18s;white-space:nowrap}
+.nb:hover{background:rgba(255,255,255,.18);color:#fff}
+.nb.on{background:#fff;color:var(--navy)}
 
-## Live-Demo
+/* ── Layout ── */
+.main{padding:1.75rem 2rem;max-width:1280px;margin:0 auto}
+.scene{display:none;animation:fi .25s ease}
+.scene.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-Sobald GitHub Pages aktiviert ist, ist die Simulation hier erreichbar:
-`https://<dein-username>.github.io/<repo-name>/`
+/* ── Grids ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
 
-## Inhalt
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;box-shadow:var(--shadow)}
 
-Die Single-Page-Anwendung (`index.html`) enthält fünf interaktive Szenarien:
+/* ── Metric ── */
+.met{background:var(--light-blue);border:1px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem}
+.met-lbl{font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
+.met-val{font-family:var(--mono);font-size:24px;font-weight:600;color:var(--navy)}
+.met-unit{font-size:13px;font-weight:400;color:var(--muted)}
+.met-sub{font-size:11px;color:var(--green);margin-top:.3rem;font-family:var(--mono)}
+.met-sub.neg{color:var(--red)}
 
-1. **Marktübersicht** – Wachstum des europäischen Marktes, Plattform-Breakdown, LCR-Abflussraten
-2. **Stabilitätsprofil** – Vergleich der Abflusskurven verschiedener Einlagentypen (Raten editierbar)
-3. **LCR-Simulator** – Echtzeit-Berechnung der Liquidity Coverage Ratio mit Szenariovergleich
-4. **Zinsszenarien** – Auswirkung der EZB-Zinssätze auf Finanzierungskosten und Einlagenmigration
-5. **Stresstest** – Konfigurierbare Bank-Run-Simulation (Fallstudien SVB / Credit Suisse 2023)
+/* ── Section heads ── */
+.sec-head{margin-bottom:1.25rem}
+.sec-badge{display:inline-block;font-size:10px;font-family:var(--mono);font-weight:600;padding:3px 9px;border-radius:4px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem}
+.b-blue{background:#DBEAFE;color:#1E40AF}
+.b-amber{background:#FEF3C7;color:#92400E}
+.b-red{background:#FEE2E2;color:#991B1B}
+.b-green{background:#D1FAE5;color:#065F46}
+.b-cyan{background:#CFFAFE;color:#164E63}
+.sec-title{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:.3rem}
+.sec-desc{font-size:13px;color:var(--muted);line-height:1.6}
 
-## Technik
+/* ── Divider ── */
+.div{height:1px;background:var(--border);margin:1rem 0}
 
-- Reine HTML/CSS/JavaScript-Anwendung, keine Build-Tools nötig
-- Charts via [Chart.js](https://www.chartjs.org/) (über CDN geladen)
-- Läuft vollständig im Browser, keine Server-Komponente
+/* ── Chart wrapper ── */
+.cw{position:relative}
+.clbl{font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:.5rem;font-weight:500}
 
-## Lokal starten
+/* ── Controls (sliders + inputs) ── */
+.ctrl-panel{background:var(--light-blue);border:1px solid var(--border2);border-radius:var(--radius);padding:1.1rem 1.25rem}
+.ctrl-title{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.9rem;font-family:var(--mono)}
+.ctrl-row{display:grid;grid-template-columns:160px 1fr 72px 44px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--dim)}
+.ctrl-row:last-of-type{border-bottom:none}
+.ctrl-lbl{font-size:12px;color:var(--text);font-weight:500;line-height:1.3}
+.ctrl-lbl small{display:block;font-size:10px;color:var(--muted);font-weight:400}
+input[type=range]{accent-color:var(--blue);height:4px;cursor:pointer;width:100%}
+.num-in{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--blue);background:#fff;border:1px solid var(--border2);border-radius:5px;padding:4px 6px;width:100%;text-align:right}
+.num-in:focus{outline:2px solid var(--blue);outline-offset:1px}
+.ctrl-unit{font-size:11px;color:var(--muted);font-family:var(--mono)}
 
-Einfach `index.html` im Browser öffnen. Für die Präsentation empfiehlt sich der Vollbildmodus (F11).
+/* ── Preset buttons ── */
+.presets{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.pre-btn{font-family:var(--font);font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1.5px solid var(--border2);background:#fff;color:var(--blue);cursor:pointer;transition:all .15s}
+.pre-btn:hover,.pre-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
 
-## Lizenz
+/* ── LCR gauge ── */
+.lcr-big{font-family:var(--mono);font-size:60px;font-weight:700;text-align:center;line-height:1;transition:color .3s}
+.lcr-min{font-size:11px;color:var(--muted);font-family:var(--mono);text-align:center;margin-top:.3rem}
+.lcr-status{font-size:13px;font-weight:700;text-align:center;margin:.6rem auto 0;padding:5px 18px;border-radius:20px;font-family:var(--mono);width:fit-content}
+.lcr-ok{background:var(--green-bg);color:var(--green)}
+.lcr-warn{background:var(--amber-bg);color:var(--amber)}
+.lcr-fail{background:var(--red-bg);color:var(--red)}
 
-Ausschliesslich für Studienzwecke im Rahmen des HWZ-Vertiefungsseminars.
+/* ── Scenario compare ── */
+.compare-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.compare-card{border-radius:8px;padding:.9rem 1rem;border:2px solid transparent}
+.compare-a{background:#EFF6FF;border-color:#BFDBFE}
+.compare-b{background:#F0FDF4;border-color:#BBF7D0}
+
+/* ── Deposit type cards ── */
+.dep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem}
+.dep-c{background:#fff;border:1.5px solid var(--dim);border-radius:8px;padding:.85rem 1rem;cursor:pointer;transition:all .18s;position:relative;padding-left:14px}
+.dep-c::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.dep-c.c-green::before{background:var(--green)}
+.dep-c.c-amber::before{background:var(--amber)}
+.dep-c.c-red::before{background:var(--red)}
+.dep-c.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.dep-c:hover{box-shadow:var(--shadow-md)}
+.dep-name{font-size:12px;font-weight:700;margin-bottom:3px}
+.dep-rate{font-family:var(--mono);font-size:18px;font-weight:600;margin-bottom:3px}
+.dep-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.dep-edit{font-size:10px;color:var(--blue);margin-top:4px;cursor:pointer;font-weight:600}
+.dep-edit:hover{text-decoration:underline}
+.edit-inline{display:none;margin-top:6px;display:flex;gap:4px;align-items:center}
+.edit-inline input{font-family:var(--mono);font-size:12px;border:1px solid var(--border2);border-radius:4px;padding:3px 6px;width:60px}
+
+/* ── Stage bar ── */
+.stages{display:flex;gap:6px;margin-bottom:.9rem}
+.stage{flex:1;padding:9px 6px;border-radius:6px;border:1.5px solid var(--dim);text-align:center;font-size:11px;font-family:var(--mono);font-weight:600;color:var(--muted);transition:all .35s;background:#fff}
+.stage.s-active{border-color:#F59E0B;background:#FFFBEB;color:#92400E}
+.stage.s-warn{border-color:#EF4444;background:#FEF2F2;color:#991B1B}
+.stage.s-crit{border-color:#DC2626;background:#FEE2E2;color:#DC2626;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3)}50%{box-shadow:0 0 0 4px rgba(220,38,38,.12)}}
+
+/* ── Run controls ── */
+.run-bar{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.btn{font-family:var(--font);font-size:13px;font-weight:600;padding:8px 20px;border-radius:6px;border:1.5px solid var(--border2);background:#fff;color:var(--navy);cursor:pointer;transition:all .18s}
+.btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.running{background:#DC2626;border-color:#DC2626;color:#fff}
+.btn.done{background:var(--green);border-color:var(--green);color:#fff}
+.run-t{font-family:var(--mono);font-size:13px;color:var(--blue);background:var(--light-blue);padding:5px 12px;border-radius:6px;border:1px solid var(--border2)}
+.spd-wrap{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+
+/* ── Stat bars ── */
+.stat-b{background:#fff;border:1.5px solid var(--dim);border-radius:8px;padding:.9rem 1rem}
+.stat-lbl{font-size:10px;color:var(--muted);font-family:var(--mono);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem}
+.stat-val{font-family:var(--mono);font-size:26px;font-weight:700;margin-bottom:.5rem}
+.stat-track{height:5px;background:var(--dim);border-radius:3px}
+.stat-fill{height:100%;border-radius:3px;transition:width .25s ease}
+
+/* ── Legend ── */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:.5rem}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-family:var(--mono)}
+.ld{width:12px;height:4px;border-radius:2px}
+
+/* ── Config panel ── */
+.cfg{background:#F8FAFC;border:1px solid var(--dim);border-radius:8px;padding:1rem;margin-bottom:1rem}
+.cfg-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-family:var(--mono)}
+.cfg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem}
+.cfg-item{display:flex;flex-direction:column;gap:3px}
+.cfg-lbl{font-size:11px;color:var(--muted);font-weight:600}
+.cfg-in{font-family:var(--mono);font-size:13px;font-weight:600;border:1.5px solid var(--border2);border-radius:5px;padding:5px 8px;color:var(--navy);background:#fff}
+.cfg-in:focus{outline:2px solid var(--blue);outline-offset:1px}
+select.cfg-in{cursor:pointer}
+
+/* ── Event labels ── */
+.ev-lbl{position:absolute;font-size:9px;font-family:var(--mono);color:var(--red);background:#FEF2F2;border:1px solid #FECACA;border-radius:3px;padding:1px 4px;white-space:nowrap;pointer-events:none}
+
+/* ── Rate presets ── */
+.rate-pills{display:flex;gap:5px;flex-wrap:wrap;margin:.5rem 0}
+.rp{font-size:11px;font-family:var(--mono);font-weight:600;padding:4px 10px;border-radius:20px;border:1.5px solid var(--border2);background:#fff;color:var(--blue);cursor:pointer;transition:all .15s}
+.rp:hover,.rp.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+@media(max-width:900px){
+  .g4{grid-template-columns:1fr 1fr}
+  .dep-grid{grid-template-columns:1fr 1fr}
+  .nav .nb{font-size:10px;padding:6px 8px}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hwz">HWZ</span>
+    <div>
+      <div class="hdr-title">Brokered Deposits &mdash; Interaktive Simulation</div>
+      <div class="hdr-sub">Major Banking &amp; Finance &middot; Vertiefungsseminar &middot; MAJ-12F26</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <button class="nb on" onclick="go(0)">&#9312; Markt&shy;&#252;bersicht</button>
+    <button class="nb" onclick="go(1)">&#9313; Stabilit&auml;ts&shy;profil</button>
+    <button class="nb" onclick="go(2)">&#9314; LCR-Simulator</button>
+    <button class="nb" onclick="go(3)">&#9315; Zins&shy;szenarien</button>
+    <button class="nb" onclick="go(4)">&#9316; Stresstest</button>
+  </nav>
+</header>
+
+<main class="main">
+
+<!-- ==== SCENE 1: MARKTÜBERSICHT ==== -->
+<section class="scene on" id="s0">
+  <div class="sec-head">
+    <span class="sec-badge b-blue">These &middot; Kapitel 2</span>
+    <div class="sec-title">Europ&auml;ischer Markt f&uuml;r Brokered Deposits</div>
+    <div class="sec-desc">Wachstum, Marktakteure und Volumenentwicklung 2018&ndash;2023</div>
+  </div>
+  <div class="g4" style="margin-bottom:1rem">
+    <div class="met"><div class="met-lbl">Gesamtvolumen 2023</div><div class="met-val">65 <span class="met-unit">Mrd. EUR</span></div><div class="met-sub">&#9650; +713% seit 2018</div></div>
+    <div class="met"><div class="met-lbl">Raisin (Marktf&uuml;hrer)</div><div class="met-val">55 <span class="met-unit">Mrd. EUR</span></div><div class="met-sub">29 L&auml;nder &middot; 100+ Banken</div></div>
+    <div class="met"><div class="met-lbl">Partnerbanken EU</div><div class="met-val">200<span class="met-unit">+</span></div><div class="met-sub">&#9650; +180% seit 2019</div></div>
+    <div class="met"><div class="met-lbl">LCR-Abfluss Brokered</div><div class="met-val">25 <span class="met-unit">%</span></div><div class="met-sub neg">vs. 3&ndash;5% stabil Retail</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="clbl">Marktvolumen Europa (Mrd. EUR) &mdash; 2018 bis 2023</div>
+      <div class="cw" style="height:240px"><canvas id="c1a" role="img" aria-label="Wachstum Deposit-Plattformen Europa">Marktvolumen: 2018: 8, 2019: 14, 2020: 22, 2021: 35, 2022: 48, 2023: 65 Mrd EUR.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="clbl">Plattform-Breakdown 2023 &amp; LCR-Abflussraten</div>
+      <div class="cw" style="height:110px"><canvas id="c1b" role="img" aria-label="Plattform-Volumen 2023">Raisin 55, Flagstone 13, Andere 10 Mrd EUR.</canvas></div>
+      <div class="div"></div>
+      <div class="clbl">LCR-Abflussrate nach Einlagentyp</div>
+      <div class="cw" style="height:100px"><canvas id="c1c" role="img" aria-label="LCR-Abflussraten nach Einlagentyp">Abflussraten: Stabil 3-5%, Wenig stabil 10%, Brokered 25%, Institut. 100%.</canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==== SCENE 2: STABILITÄTSPROFIL ==== -->
+<section class="scene" id="s1">
+  <div class="sec-head">
+    <span class="sec-badge b-amber">Antithese &middot; Kapitel 3.1</span>
+    <div class="sec-title">Einlagen-Stabilit&auml;tsprofil</div>
+    <div class="sec-desc">Klicke auf Einlagentypen um Abflusskurven zu vergleichen &middot; Abflussrate direkt editierbar</div>
+  </div>
+  <div class="dep-grid" id="dep-grid">
+    <!-- dynamically rendered -->
+  </div>
+  <div class="card">
+    <div class="legend" id="dep-legend"></div>
+    <div class="clbl" id="dep-clbl">W&auml;hle einen oder mehrere Einlagentypen aus</div>
+    <div class="cw" style="height:230px"><canvas id="c2" role="img" aria-label="Abflusskurven nach Einlagentyp &uuml;ber 30 Tage">Abflusskurven verschiedener Einlagentypen.</canvas></div>
+  </div>
+</section>
+
+<!-- ==== SCENE 3: LCR SIMULATOR ==== -->
+<section class="scene" id="s2">
+  <div class="sec-head">
+    <span class="sec-badge b-cyan">Regulierung &middot; CRR Art. 412 / Del. VO 2015/61</span>
+    <div class="sec-title">LCR-Simulator</div>
+    <div class="sec-desc">Adjustiere Einlagenstruktur und HQLA &mdash; LCR wird in Echtzeit berechnet. Szenarien k&ouml;nnen gespeichert und verglichen werden.</div>
+  </div>
+  <div class="presets">
+    <span style="font-size:12px;color:var(--muted);font-weight:600;align-self:center">Schnellauswahl:</span>
+    <button class="pre-btn on" onclick="setPreset(0)">Konservativ</button>
+    <button class="pre-btn" onclick="setPreset(1)">Standard</button>
+    <button class="pre-btn" onclick="setPreset(2)">Aggressiv</button>
+    <button class="pre-btn" onclick="setPreset(3)">Krise</button>
+  </div>
+  <div class="g2" id="lcr-main">
+    <div>
+      <div class="ctrl-panel">
+        <div class="ctrl-title">Einlagenstruktur &amp; HQLA (Basis: 1 Mrd. EUR)</div>
+        <div class="ctrl-row">
+          <div class="ctrl-lbl">Stabile Retail<small>LCR-Rate: 5%</small></div>
+          <input type="range" id="sl1" min="0" max="100" step="1" value="40" oninput="syncN('sl1','ni1');calcLCR()">
+          <input type="number" class="num-in" id="ni1" min="0" max="100" value="40" oninput="syncS('ni1','sl1');calcLCR()">
+          <span class="ctrl-unit">%</span>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-lbl">Wenig stabile Retail<small>LCR-Rate: 10%</small></div>
+          <input type="range" id="sl2" min="0" max="100" step="1" value="20" oninput="syncN('sl2','ni2');calcLCR()">
+          <input type="number" class="num-in" id="ni2" min="0" max="100" value="20" oninput="syncS('ni2','sl2');calcLCR()">
+          <span class="ctrl-unit">%</span>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-lbl">Retail Brokered<small>LCR-Rate: 25%</small></div>
+          <input type="range" id="sl3" min="0" max="100" step="1" value="20" oninput="syncN('sl3','ni3');calcLCR()">
+          <input type="number" class="num-in" id="ni3" min="0" max="100" value="20" oninput="syncS('ni3','sl3');calcLCR()">
+          <span class="ctrl-unit">%</span>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-lbl">Institutional Brokered<small>LCR-Rate: 100%</small></div>
+          <input type="range" id="sl4" min="0" max="100" step="1" value="10" oninput="syncN('sl4','ni4');calcLCR()">
+          <input type="number" class="num-in" id="ni4" min="0" max="100" value="10" oninput="syncS('ni4','sl4');calcLCR()">
+          <span class="ctrl-unit">%</span>
+        </div>
+        <div class="ctrl-row" style="border-top:2px solid var(--border2)">
+          <div class="ctrl-lbl" style="color:var(--blue)">HQLA-Bestand<small>Mio EUR</small></div>
+          <input type="range" id="sl5" min="0" max="400" step="5" value="150" oninput="syncN('sl5','ni5');calcLCR()">
+          <input type="number" class="num-in" id="ni5" min="0" max="400" step="5" value="150" oninput="syncS('ni5','sl5');calcLCR()">
+          <span class="ctrl-unit">Mio</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:.6rem;margin-top:.75rem">
+        <button class="btn" style="flex:1" onclick="saveScenario('A')">Szenario A speichern</button>
+        <button class="btn" style="flex:1" onclick="saveScenario('B')">Szenario B speichern</button>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:.75rem">
+      <div>
+        <div class="cw" style="height:155px"><canvas id="c3g" role="img" aria-label="LCR Gauge">LCR Gauge Diagramm.</canvas></div>
+        <div id="lcr-n" class="lcr-big" style="color:var(--green)">150%</div>
+        <div class="lcr-min">Mindestanforderung: 100% (CRR Art. 412)</div>
+        <div id="lcr-st" class="lcr-status lcr-ok">&#10003; Anforderung erf&uuml;llt</div>
+      </div>
+      <div class="div"></div>
+      <div class="g2" style="gap:.5rem">
+        <div class="card-sm"><div class="met-lbl">Netto-Abfl&uuml;sse (30T)</div><div id="lo" style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--red)">100 Mio</div></div>
+        <div class="card-sm"><div class="met-lbl">HQLA-Puffer</div><div id="lh" style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--blue)">150 Mio</div></div>
+      </div>
+      <div style="background:#F8FAFC;border:1px solid var(--dim);border-radius:6px;padding:.75rem">
+        <div style="font-size:10px;font-family:var(--mono);font-weight:700;color:var(--navy);text-transform:uppercase;margin-bottom:.3rem">Formel</div>
+        <div id="lcr-form" style="font-family:var(--mono);font-size:11px;color:var(--text)">LCR = 150 / 100 = 150%</div>
+      </div>
+    </div>
+  </div>
+  <div id="compare-area" style="display:none;margin-top:1rem">
+    <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:.5rem;text-transform:uppercase;font-family:var(--mono)">Szenariovergleich</div>
+    <div class="compare-row">
+      <div class="compare-card compare-a" id="cmp-a"><div style="font-size:11px;font-family:var(--mono);font-weight:700;color:#1E40AF;margin-bottom:.4rem">SZENARIO A</div><div id="cmp-a-content" style="font-size:12px;color:var(--muted)">Noch nicht gespeichert</div></div>
+      <div class="compare-card compare-b" id="cmp-b"><div style="font-size:11px;font-family:var(--mono);font-weight:700;color:#065F46;margin-bottom:.4rem">SZENARIO B</div><div id="cmp-b-content" style="font-size:12px;color:var(--muted)">Noch nicht gespeichert</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==== SCENE 4: ZINSSZENARIEN ==== -->
+<section class="scene" id="s3">
+  <div class="sec-head">
+    <span class="sec-badge b-amber">Synthese &middot; Zinszyklus 2022&ndash;2024</span>
+    <div class="sec-title">Zinsszenarien &amp; Einlagenmigration</div>
+    <div class="sec-desc">Simuliere den Einfluss ver&auml;nderlicher EZB-Zinss&auml;tze auf Finanzierungskosten und Einlagenmigration</div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="clbl">EZB-Einlagesatz 2020&ndash;2024 (%)</div>
+    <div class="cw" style="height:180px"><canvas id="c4r" role="img" aria-label="EZB-Zinsentwicklung">EZB-Einlagesatz: 2020: -0.5%, 2023 peak: 4.0%, 2024: 3.25%.</canvas></div>
+  </div>
+  <div class="g2">
+    <div class="ctrl-panel">
+      <div class="ctrl-title">Zinssimulator &mdash; eigene Eingabe</div>
+      <div style="margin-bottom:.6rem">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:.3rem;font-weight:600">EZB-Zinssatz Preset</div>
+        <div class="rate-pills">
+          <button class="rp" onclick="setRate(-0.5)">-0.5%</button>
+          <button class="rp" onclick="setRate(0)">0%</button>
+          <button class="rp" onclick="setRate(1)">1%</button>
+          <button class="rp" onclick="setRate(2)">2%</button>
+          <button class="rp" onclick="setRate(3)">3%</button>
+          <button class="rp on" onclick="setRate(3.5)">3.5%</button>
+          <button class="rp" onclick="setRate(4)">4%</button>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-lbl">EZB-Zinssatz<small>Eigene Eingabe (%)</small></div>
+        <input type="range" id="rs1" min="-1" max="6" step="0.25" value="3.5" oninput="syncN('rs1','rn1');calcRate()">
+        <input type="number" class="num-in" id="rn1" min="-1" max="6" step="0.25" value="3.5" oninput="syncS('rn1','rs1');calcRate()">
+        <span class="ctrl-unit">%</span>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-lbl">Brokered-Anteil<small>Am Einlagenportfolio</small></div>
+        <input type="range" id="rs2" min="0" max="80" step="5" value="20" oninput="syncN('rs2','rn2');calcRate()">
+        <input type="number" class="num-in" id="rn2" min="0" max="80" step="5" value="20" oninput="syncS('rn2','rs2');calcRate()">
+        <span class="ctrl-unit">%</span>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-lbl">Gesamteinlagen<small>Portfoliogr&ouml;&szlig;e</small></div>
+        <input type="range" id="rs3" min="100" max="10000" step="100" value="1000" oninput="syncN('rs3','rn3');calcRate()">
+        <input type="number" class="num-in" id="rn3" min="100" max="10000" step="100" value="1000" oninput="syncS('rn3','rs3');calcRate()">
+        <span class="ctrl-unit">Mio</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+      <div class="g2" style="gap:.75rem">
+        <div class="card-sm"><div class="met-lbl">Retail Zins (Pass-through 60%)</div><div id="r-ret" style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--green)">2.10%</div></div>
+        <div class="card-sm"><div class="met-lbl">Brokered Zins (Pass-through 90%)</div><div id="r-brk" style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--amber)">3.15%</div></div>
+      </div>
+      <div class="card-sm">
+        <div class="met-lbl">Mehrkosten Brokered vs. Retail p.a.</div>
+        <div id="r-xtr" style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red)">+2.1 Mio EUR</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:.3rem" id="r-form">Berechnung: 20% &times; 1&apos;000 Mio &times; (3.15% - 2.10%) = 2.1 Mio</div>
+      </div>
+      <div class="card-sm">
+        <div class="met-lbl">Einlagenmigration-Druck</div>
+        <div id="r-mig-bar" style="height:8px;background:var(--dim);border-radius:4px;margin:.4rem 0"><div id="r-mig-fill" style="height:100%;border-radius:4px;background:var(--amber);transition:width .3s;width:70%"></div></div>
+        <div id="r-mig-lbl" style="font-size:11px;color:var(--amber);font-weight:600">Hoch &mdash; Kunden werden attraktivere Alternativen suchen</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==== SCENE 5: STRESSTEST ==== -->
+<section class="scene" id="s4">
+  <div class="sec-head">
+    <span class="sec-badge b-red">Antithese &middot; Fallstudie SVB / Credit Suisse 2023</span>
+    <div class="sec-title">Bank-Run Simulation</div>
+    <div class="sec-desc">Konfiguriere deine Bank und starte die Simulation &mdash; beobachte wie verschiedene Einlagentypen reagieren</div>
+  </div>
+  <div class="cfg">
+    <div class="cfg-title">&#9881; Simulation konfigurieren</div>
+    <div class="cfg-grid">
+      <div class="cfg-item"><label class="cfg-lbl">Ereignistyp</label><select class="cfg-in" id="ev-type" onchange="resetRun()"><option value="0">Vertrauensschock (SVB-Typ)</option><option value="1">Zinsanstieg-Panik</option><option value="2">Bonitätsverschlechterung</option><option value="3">Systemkrise</option></select></div>
+      <div class="cfg-item"><label class="cfg-lbl">Stabile Retail (Mio EUR)</label><input type="number" class="cfg-in" id="cfg-s" value="400" min="0" max="5000" step="50" onchange="resetRun()"></div>
+      <div class="cfg-item"><label class="cfg-lbl">Retail Brokered (Mio EUR)</label><input type="number" class="cfg-in" id="cfg-b" value="300" min="0" max="5000" step="50" onchange="resetRun()"></div>
+      <div class="cfg-item"><label class="cfg-lbl">Institutional Brokered (Mio EUR)</label><input type="number" class="cfg-in" id="cfg-i" value="200" min="0" max="5000" step="50" onchange="resetRun()"></div>
+      <div class="cfg-item"><label class="cfg-lbl">Simulationsgeschwindigkeit</label><select class="cfg-in" id="cfg-spd"><option value="80">1&times; (langsam)</option><option value="40" selected>2&times; (Standard)</option><option value="16">5&times; (schnell)</option><option value="8">10&times; (Pr&auml;sentation)</option></select></div>
+    </div>
+  </div>
+  <div class="stages" id="sts">
+    <div class="stage" id="st0">T+0h<br>Normal</div>
+    <div class="stage" id="st1">T+2h<br>Warnung</div>
+    <div class="stage" id="st2">T+6h<br>Stress</div>
+    <div class="stage" id="st3">T+12h<br>Krise</div>
+    <div class="stage" id="st4">T+24h<br>Kollaps</div>
+  </div>
+  <div class="run-bar">
+    <button class="btn" id="run-btn" onclick="toggleRun()">&#9654; Simulation starten</button>
+    <button class="btn" onclick="resetRun()">&#8635; Zur&uuml;cksetzen</button>
+    <div class="run-t" id="rt">T + 0h 00min</div>
+    <div class="spd-wrap" style="margin-left:auto">
+      <span>SVB-Referenz: $42 Mrd. in 10h abgezogen (M&auml;rz 2023)</span>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:#059669"></div>Stabile Retail</div>
+        <div class="li"><div class="ld" style="background:#D97706;border-top:2px dashed #D97706;background:transparent"></div>Retail Brokered</div>
+        <div class="li"><div class="ld" style="background:#DC2626"></div>Institutional Brokered</div>
+      </div>
+      <div class="clbl">Einlagen verbleibend (%) &mdash; &uuml;ber 48 Stunden</div>
+      <div class="cw" style="height:230px"><canvas id="c5" role="img" aria-label="Bank-Run Simulation Einlagenabfl&uuml;sse">Simulation Einlagenabfl&uuml;sse &uuml;ber 48 Stunden.</canvas></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.65rem">
+      <div class="stat-b" style="border-left:4px solid #059669">
+        <div class="stat-lbl">Stabile Retail &mdash; Verbleibend</div>
+        <div id="rv-s" class="stat-val" style="color:#059669">100.0%</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:.4rem" id="rv-s-abs">400 Mio EUR</div>
+        <div class="stat-track"><div class="stat-fill" id="rb-s" style="background:#059669;width:100%"></div></div>
+      </div>
+      <div class="stat-b" style="border-left:4px solid #D97706">
+        <div class="stat-lbl">Retail Brokered &mdash; Verbleibend</div>
+        <div id="rv-b" class="stat-val" style="color:#D97706">100.0%</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:.4rem" id="rv-b-abs">300 Mio EUR</div>
+        <div class="stat-track"><div class="stat-fill" id="rb-b" style="background:#D97706;width:100%"></div></div>
+      </div>
+      <div class="stat-b" style="border-left:4px solid #DC2626">
+        <div class="stat-lbl">Institutional Brokered &mdash; Verbleibend</div>
+        <div id="rv-i" class="stat-val" style="color:#DC2626">100.0%</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:.4rem" id="rv-i-abs">200 Mio EUR</div>
+        <div class="stat-track"><div class="stat-fill" id="rb-i" style="background:#DC2626;width:100%"></div></div>
+      </div>
+      <div class="card-sm" style="background:#FEF2F2;border-color:#FECACA">
+        <div class="met-lbl" style="color:#991B1B">Gesamtabfluss kumuliert</div>
+        <div id="rv-tot" style="font-family:var(--mono);font-size:26px;font-weight:700;color:#DC2626">0 Mio EUR</div>
+        <div id="rv-tot-pct" style="font-size:11px;font-family:var(--mono);color:#991B1B;margin-top:.2rem">0% des Gesamtportfolios</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ── Navigation ──────────────────────────────────────────────
+function go(n){
+  document.querySelectorAll('.scene').forEach((s,i)=>s.classList.toggle('on',i===n));
+  document.querySelectorAll('.nb').forEach((b,i)=>b.classList.toggle('on',i===n));
+  if(n===2)calcLCR();
+  if(n===3)calcRate();
+}
+
+// ── Slider <-> Number sync ──────────────────────────────────
+function syncN(sid,nid){document.getElementById(nid).value=document.getElementById(sid).value}
+function syncS(nid,sid){
+  const el=document.getElementById(nid);
+  const mn=parseFloat(el.min||0),mx=parseFloat(el.max||100);
+  const v=Math.max(mn,Math.min(mx,parseFloat(el.value)||0));
+  el.value=v; document.getElementById(sid).value=v;
+}
+
+// ── CHART defaults ──────────────────────────────────────────
+const NAVY='#1E3A8A',BLUE='#2563EB',GREEN='#059669',AMBER='#D97706',RED='#DC2626',CYAN='#0891B2';
+const TT={backgroundColor:'#1E293B',titleColor:'#94A3B8',bodyColor:'#F1F5F9',borderColor:'#334155',borderWidth:1};
+const CD={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT}};
+const XTICK={grid:{color:'rgba(0,0,0,.05)'},ticks:{color:'#94A3B8',font:{size:10}}};
+const YTICK={grid:{color:'rgba(0,0,0,.05)'},ticks:{color:'#94A3B8',font:{size:10}}};
+
+// ── SCENE 1 charts ──────────────────────────────────────────
+new Chart(document.getElementById('c1a'),{
+  type:'line',
+  data:{labels:['2018','2019','2020','2021','2022','2023'],
+    datasets:[
+      {label:'Gesamt',data:[8,14,22,35,48,65],borderColor:BLUE,backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:BLUE},
+      {label:'Raisin',data:[5,8,14,24,38,55],borderColor:CYAN,borderDash:[5,3],backgroundColor:'transparent',tension:.4,pointRadius:3,pointBackgroundColor:CYAN}
+    ]},
+  options:{...CD,scales:{x:XTICK,y:{...YTICK,min:0,max:75,ticks:{...YTICK.ticks,callback:v=>v+' Mrd'}}}}
+});
+new Chart(document.getElementById('c1b'),{
+  type:'bar',
+  data:{labels:['Raisin','Flagstone','Andere'],
+    datasets:[{data:[55,13,10],backgroundColor:[BLUE,CYAN,'#64748B'],borderRadius:4,borderSkipped:false}]},
+  options:{...CD,scales:{x:{...XTICK,grid:{display:false}},y:{...YTICK,ticks:{...YTICK.ticks,callback:v=>v+' Mrd'},max:70}}}
+});
+new Chart(document.getElementById('c1c'),{
+  type:'bar',
+  data:{labels:['Stabil Retail (3-5%)','Wenig stabil (10%)','Retail Brokered (25%)','Institut. Brokered (100%)'],
+    datasets:[{data:[4,10,25,100],backgroundColor:[GREEN,'#34D399',AMBER,RED],borderRadius:3,borderSkipped:false}]},
+  options:{...CD,indexAxis:'y',scales:{x:{...XTICK,ticks:{...XTICK.ticks,callback:v=>v+'%'},max:110},y:{...YTICK,grid:{display:false}}}}
+});
+
+// ── SCENE 2 (Stability) ─────────────────────────────────────
+const DEPS=[
+  {n:'Stabile Retail-Einlagen',r:3,col:GREEN,cls:'c-green',d:'Einlagensicherung, direkte Kundenbindung, kein Broker'},
+  {n:'Wenig stabile Retail',r:8,col:'#34D399',cls:'c-green',d:'Online-Konten, zinssensitiv, keine persönl. Beziehung'},
+  {n:'Retail Brokered',r:18,col:AMBER,cls:'c-amber',d:'Plattform-vermittelt, primär zinsgetrieben'},
+  {n:'Operative Wholesale',r:25,col:'#F59E0B',cls:'c-amber',d:'Geschäftsbeziehung vorhanden, partiell stabil'},
+  {n:'Non-Op. Wholesale',r:55,col:'#EF4444',cls:'c-red',d:'Reine Zinsanlage, hohe Mobilität'},
+  {n:'Institutional Brokered',r:100,col:RED,cls:'c-red',d:'Vollständiger Abfluss bei Stress (EBA-Interpretation)'}
+];
+function renderDepGrid(){
+  document.getElementById('dep-grid').innerHTML=DEPS.map((d,i)=>`
+    <div class="dep-c ${d.cls}" id="dc${i}" onclick="selDep(${i})">
+      <div class="dep-name" style="color:${d.col}">${d.n}</div>
+      <div class="dep-rate" style="color:${d.col}">${d.r}%</div>
+      <div class="dep-desc">${d.d}</div>
+      <div class="dep-edit" onclick="event.stopPropagation();toggleEdit(${i})">&#9998; Rate bearbeiten</div>
+      <div class="edit-inline" id="ei${i}" style="display:none">
+        <input type="number" id="er${i}" value="${d.r}" min="1" max="100" style="font-family:var(--mono);font-size:12px;border:1px solid var(--border2);border-radius:4px;padding:3px 6px;width:60px">
+        <span style="font-size:10px;color:var(--muted)">%</span>
+        <button onclick="event.stopPropagation();applyRate(${i})" style="font-size:10px;padding:3px 8px;background:var(--blue);color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:var(--font)">OK</button>
+      </div>
+    </div>`).join('');
+}
+renderDepGrid();
+let selDeps=[];
+const stabChrt=new Chart(document.getElementById('c2'),{
+  type:'line',
+  data:{labels:Array.from({length:30},(_,i)=>'Tag '+i),datasets:[]},
+  options:{...CD,scales:{x:{...XTICK,ticks:{...XTICK.ticks,maxTicksLimit:10}},
+    y:{...YTICK,min:0,max:105,ticks:{...YTICK.ticks,callback:v=>v.toFixed(0)+'%'}}}}
+});
+function selDep(i){
+  const p=selDeps.indexOf(i);if(p>=0)selDeps.splice(p,1);else selDeps.push(i);
+  document.querySelectorAll('[id^=dc]').forEach((c,j)=>c.classList.toggle('sel',selDeps.includes(j)));
+  stabChrt.data.datasets=selDeps.map(i=>{
+    const d=DEPS[i],rt=d.r/100/30;
+    return{label:d.n,data:Array.from({length:30},(_,day)=>Math.max(0,parseFloat((100*Math.exp(-rt*day)).toFixed(2)))),
+      borderColor:d.col,backgroundColor:'transparent',tension:.4,pointRadius:0,borderWidth:2.5};
+  });
+  document.getElementById('dep-legend').innerHTML=selDeps.map(i=>`<div class="li"><div class="ld" style="background:${DEPS[i].col}"></div>${DEPS[i].n}</div>`).join('');
+  document.getElementById('dep-clbl').textContent=selDeps.length?'Abflusskurve über 30 Tage (Stressszenario)':'Wähle einen oder mehrere Einlagentypen aus';
+  stabChrt.update();
+}
+function toggleEdit(i){
+  const el=document.getElementById('ei'+i);
+  el.style.display=el.style.display==='none'?'flex':'none';
+}
+function applyRate(i){
+  const v=parseFloat(document.getElementById('er'+i).value);
+  if(!isNaN(v)&&v>0&&v<=100){DEPS[i].r=v;renderDepGrid();selDeps=[selDeps.filter(s=>s!==i)];selDeps=[];stabChrt.data.datasets=[];stabChrt.update();}
+}
+
+// ── SCENE 3 (LCR) ──────────────────────────────────────────
+const PRESETS=[[40,20,20,10,150],[25,30,25,15,120],[10,20,35,20,100],[5,10,40,35,80]];
+let activeP=0;
+function setPreset(n){
+  activeP=n;
+  document.querySelectorAll('.pre-btn').forEach((b,i)=>b.classList.toggle('on',i===n));
+  const p=PRESETS[n];
+  [1,2,3,4].forEach(i=>{document.getElementById('sl'+i).value=p[i-1];document.getElementById('ni'+i).value=p[i-1]});
+  document.getElementById('sl5').value=p[4];document.getElementById('ni5').value=p[4];
+  calcLCR();
+}
+const lcrG=new Chart(document.getElementById('c3g'),{
+  type:'doughnut',
+  data:{datasets:[{data:[150,450],backgroundColor:[GREEN,'rgba(0,0,0,.06)'],borderWidth:0,circumference:180,rotation:270}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},cutout:'80%'}
+});
+let scenarios={};
+function calcLCR(){
+  const v=Array.from({length:4},(_,i)=>parseFloat(document.getElementById('sl'+(i+1)).value)||0);
+  const hqla=parseFloat(document.getElementById('sl5').value)||0;
+  const out=(v[0]*1000/100*0.05)+(v[1]*1000/100*0.10)+(v[2]*1000/100*0.25)+(v[3]*1000/100*1.0);
+  const lcr=out>0?Math.round(hqla/out*100):999;
+  const col=lcr>=150?GREEN:lcr>=100?AMBER:RED;
+  document.getElementById('lcr-n').textContent=(lcr>999?'>999':lcr)+'%';
+  document.getElementById('lcr-n').style.color=col;
+  document.getElementById('lo').textContent=Math.round(out)+' Mio';
+  document.getElementById('lh').textContent=hqla+' Mio';
+  document.getElementById('lcr-form').textContent=`LCR = ${hqla} / ${Math.round(out)} = ${lcr>999?'>999':lcr}%  |  Abfl. = ${v[0]}%×5%+${v[1]}%×10%+${v[2]}%×25%+${v[3]}%×100%`;
+  const st=document.getElementById('lcr-st');
+  if(lcr>=150){st.className='lcr-status lcr-ok';st.textContent='✓ Komfortabel erfüllt';}
+  else if(lcr>=100){st.className='lcr-status lcr-warn';st.textContent='⚠ Knapp erfüllt';}
+  else{st.className='lcr-status lcr-fail';st.textContent='✗ Anforderung nicht erfüllt';}
+  const capped=Math.min(lcr,300);
+  lcrG.data.datasets[0].data=[capped,300-capped];
+  lcrG.data.datasets[0].backgroundColor=[col,'rgba(0,0,0,.06)'];
+  lcrG.update('none');
+}
+function saveScenario(which){
+  const v=Array.from({length:4},(_,i)=>parseFloat(document.getElementById('ni'+(i+1)).value)||0);
+  const hqla=parseFloat(document.getElementById('ni5').value)||0;
+  const out=(v[0]*1000/100*0.05)+(v[1]*1000/100*0.10)+(v[2]*1000/100*0.25)+(v[3]*1000/100*1.0);
+  const lcr=out>0?Math.round(hqla/out*100):999;
+  const labels=['Stabile Retail','Wenig stabil','Retail Brokered','Inst. Brokered'];
+  scenarios[which]={v,hqla,lcr};
+  const html=`<b>LCR: ${lcr>999?'>999':lcr}%</b><br><small style="color:var(--muted)">${labels.map((l,i)=>l+': '+v[i]+'%').join(' | ')}<br>HQLA: ${hqla} Mio</small>`;
+  document.getElementById('cmp-'+which.toLowerCase()+'-content').innerHTML=html;
+  document.getElementById('compare-area').style.display='block';
+}
+calcLCR();
+
+// ── SCENE 4 (Rates) ─────────────────────────────────────────
+new Chart(document.getElementById('c4r'),{
+  type:'line',
+  data:{labels:['Jan\'20','Jul\'20','Jan\'21','Jul\'21','Jan\'22','Jul\'22','Oct\'22','Jan\'23','Apr\'23','Jul\'23','Oct\'23','Jan\'24','Jul\'24'],
+    datasets:[{data:[-0.5,-0.5,-0.5,-0.5,-0.5,0.5,1.5,2.5,3.0,3.5,4.0,4.0,3.25],
+      borderColor:AMBER,backgroundColor:'rgba(217,119,6,.1)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:AMBER}]},
+  options:{...CD,scales:{x:{...XTICK,ticks:{...XTICK.ticks,maxTicksLimit:9}},y:{...YTICK,min:-1,max:5,ticks:{...YTICK.ticks,callback:v=>v+'%'}}}}
+});
+function setRate(r){
+  document.getElementById('rs1').value=r;document.getElementById('rn1').value=r;
+  document.querySelectorAll('.rp').forEach(b=>b.classList.toggle('on',parseFloat(b.getAttribute('onclick').match(/-?[\d.]+/)[0])===r));
+  calcRate();
+}
+function calcRate(){
+  const rate=parseFloat(document.getElementById('rs1').value)||0;
+  const bsh=parseFloat(document.getElementById('rs2').value)||0;
+  const tot=parseFloat(document.getElementById('rs3').value)||1000;
+  const retR=parseFloat((rate*0.6).toFixed(2));
+  const brkR=parseFloat((rate*0.9).toFixed(2));
+  const extra=parseFloat(((brkR-retR)*bsh/100*tot).toFixed(1));
+  document.getElementById('r-ret').textContent=retR.toFixed(2)+'%';
+  document.getElementById('r-brk').textContent=brkR.toFixed(2)+'%';
+  document.getElementById('r-xtr').textContent=(extra>=0?'+':'')+extra.toLocaleString('de-CH')+' Mio EUR';
+  document.getElementById('r-xtr').style.color=extra>0?RED:GREEN;
+  document.getElementById('r-form').textContent=`${bsh}% × ${tot.toLocaleString('de-CH')} Mio × (${brkR.toFixed(2)}% − ${retR.toFixed(2)}%) = ${extra.toLocaleString('de-CH')} Mio`;
+  const mig=Math.max(0,Math.min(100,rate*18));
+  document.getElementById('r-mig-fill').style.width=mig+'%';
+  document.getElementById('r-mig-fill').style.background=mig>60?RED:mig>30?AMBER:GREEN;
+  document.getElementById('r-mig-lbl').textContent=mig>60?'Sehr hoch — starker Migrationsdruck':mig>30?'Mittel — spürbarer Migrationsdruck':'Niedrig — kaum Migrationsdruck';
+  document.getElementById('r-mig-lbl').style.color=mig>60?RED:mig>30?AMBER:GREEN;
+}
+calcRate();
+
+// ── SCENE 5 (Stresstest) ────────────────────────────────────
+const DECAY={
+  0:{s:0.00025,b:0.022,i:0.10},  // Vertrauensschock
+  1:{s:0.0005,b:0.018,i:0.07},   // Zinsanstieg-Panik
+  2:{s:0.0008,b:0.015,i:0.09},   // Bonitätsverschlechterung
+  3:{s:0.0015,b:0.030,i:0.14}    // Systemkrise
+};
+const HOURS=Array.from({length:49},(_,i)=>i);
+let runIv=null,runStep=0,isRun=false;
+const runChart=new Chart(document.getElementById('c5'),{
+  type:'line',
+  data:{labels:HOURS.map(h=>'T+'+h+'h'),datasets:[
+    {label:'Stabil',data:HOURS.map(()=>null),borderColor:GREEN,backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2.5},
+    {label:'Brokered',data:HOURS.map(()=>null),borderColor:AMBER,backgroundColor:'transparent',borderDash:[5,3],tension:.3,pointRadius:0,borderWidth:2.5},
+    {label:'Institut.',data:HOURS.map(()=>null),borderColor:RED,backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2.5}
+  ]},
+  options:{...CD,scales:{x:{...XTICK,ticks:{...XTICK.ticks,maxTicksLimit:13}},y:{...YTICK,min:0,max:105,ticks:{...YTICK.ticks,callback:v=>v+'%'}}}}
+});
+function decay(h,rate,power){return Math.max(0,100*Math.exp(-rate*Math.pow(h,power||1)))}
+function getDK(){return DECAY[parseInt(document.getElementById('ev-type').value)||0]}
+function toggleRun(){
+  if(isRun){clearInterval(runIv);isRun=false;const b=document.getElementById('run-btn');b.textContent='▶ Fortsetzen';b.className='btn';}
+  else{isRun=true;const b=document.getElementById('run-btn');b.textContent='⏸ Pausieren';b.className='btn running';doRun();}
+}
+function doRun(){
+  const spd=parseInt(document.getElementById('cfg-spd').value)||40;
+  const S0=parseFloat(document.getElementById('cfg-s').value)||400;
+  const B0=parseFloat(document.getElementById('cfg-b').value)||300;
+  const I0=parseFloat(document.getElementById('cfg-i').value)||200;
+  const TOT=S0+B0+I0;
+  const dk=getDK();
+  runIv=setInterval(()=>{
+    if(runStep>48){clearInterval(runIv);isRun=false;const b=document.getElementById('run-btn');b.textContent='✓ Abgeschlossen';b.className='btn done';return;}
+    const sv=decay(runStep,dk.s,1.4),bv=decay(runStep,dk.b,0.9),iv=decay(runStep,dk.i,0.82);
+    runChart.data.datasets[0].data[runStep]=parseFloat(sv.toFixed(1));
+    runChart.data.datasets[1].data[runStep]=parseFloat(bv.toFixed(1));
+    runChart.data.datasets[2].data[runStep]=parseFloat(iv.toFixed(1));
+    runChart.update('none');
+    const sf=S0*sv/100,bf=B0*bv/100,inf=I0*iv/100;
+    const tot_r=sf+bf+inf,tot_l=TOT-tot_r,pct=parseFloat((tot_l/TOT*100).toFixed(1));
+    document.getElementById('rv-s').textContent=sv.toFixed(1)+'%';
+    document.getElementById('rv-b').textContent=bv.toFixed(1)+'%';
+    document.getElementById('rv-i').textContent=iv.toFixed(1)+'%';
+    document.getElementById('rv-s-abs').textContent=sf.toFixed(0)+' Mio EUR';
+    document.getElementById('rv-b-abs').textContent=bf.toFixed(0)+' Mio EUR';
+    document.getElementById('rv-i-abs').textContent=inf.toFixed(0)+' Mio EUR';
+    document.getElementById('rb-s').style.width=sv.toFixed(0)+'%';
+    document.getElementById('rb-b').style.width=bv.toFixed(0)+'%';
+    document.getElementById('rb-i').style.width=iv.toFixed(0)+'%';
+    document.getElementById('rv-tot').textContent=tot_l.toFixed(0)+' Mio EUR';
+    document.getElementById('rv-tot-pct').textContent=pct+'% des Gesamtportfolios abgeflossen';
+    document.getElementById('rt').textContent='T + '+runStep+'h 00min';
+    ['st0','st1','st2','st3','st4'].forEach(id=>document.getElementById(id).className='stage');
+    const stg=runStep<1?0:runStep<6?1:runStep<12?2:runStep<24?3:4;
+    const cls=['','s-active','s-warn','s-warn s-crit','s-crit'];
+    if(stg>0)document.getElementById('st'+stg).className='stage '+cls[stg];
+    else document.getElementById('st0').className='stage s-active';
+    runStep++;
+  },spd);
+}
+function resetRun(){
+  clearInterval(runIv);isRun=false;runStep=0;
+  const b=document.getElementById('run-btn');b.textContent='▶ Simulation starten';b.className='btn';
+  runChart.data.datasets.forEach(d=>d.data=HOURS.map(()=>null));
+  runChart.update();
+  ['rv-s','rv-b','rv-i'].forEach(id=>document.getElementById(id).textContent='100.0%');
+  const S0=parseFloat(document.getElementById('cfg-s').value)||400;
+  const B0=parseFloat(document.getElementById('cfg-b').value)||300;
+  const I0=parseFloat(document.getElementById('cfg-i').value)||200;
+  document.getElementById('rv-s-abs').textContent=S0+' Mio EUR';
+  document.getElementById('rv-b-abs').textContent=B0+' Mio EUR';
+  document.getElementById('rv-i-abs').textContent=I0+' Mio EUR';
+  ['rb-s','rb-b','rb-i'].forEach(id=>document.getElementById(id).style.width='100%');
+  document.getElementById('rv-tot').textContent='0 Mio EUR';
+  document.getElementById('rv-tot-pct').textContent='0% des Gesamtportfolios abgeflossen';
+  document.getElementById('rt').textContent='T + 0h 00min';
+  ['st0','st1','st2','st3','st4'].forEach(id=>document.getElementById(id).className='stage');
+}
+</script>
+</body>
+</html>
