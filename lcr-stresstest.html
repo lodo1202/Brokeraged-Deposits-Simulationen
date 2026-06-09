@@ -1,1375 +1,951 @@
 <!DOCTYPE html>
-
 <html lang="de">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Brokered Deposits | HWZ Vertiefungsseminar</title>
-
-<script src=https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-
 :root{
-
   --bg:#f0f2f7;--surface:#ffffff;--surface2:#f5f7fb;--border:#d8dde8;
-
   --accent:#3d5fe0;--accent2:#7c5cdb;--accent3:#0e9e6b;--accent4:#e06b1a;
-
   --danger:#d93030;--warn:#c08000;--text:#1a1e2e;--muted:#5a6380;
-
   --radius:12px;--shadow:0 2px 12px rgba(0,0,0,.08);
-
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
-
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
-
 .topbar{background:var(--surface);border-bottom:2px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
-
 .logo{font-weight:800;font-size:.88rem;color:var(--accent);letter-spacing:.04em;white-space:nowrap}
-
 .logo span{color:var(--muted);font-weight:400}
-
 .nav{display:flex;gap:5px;flex-wrap:wrap}
-
 .nb{background:none;border:1.5px solid var(--border);color:var(--muted);padding:6px 18px;border-radius:20px;cursor:pointer;font-size:.78rem;font-weight:600;transition:all .2s;white-space:nowrap}
-
 .nb:hover{border-color:var(--accent);color:var(--accent)}
-
 .nb.on{background:var(--accent);border-color:var(--accent);color:#fff}
-
 .mode-toggle{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted)}
-
 .toggle-switch{position:relative;width:36px;height:20px;cursor:pointer}
-
 .toggle-switch input{opacity:0;width:0;height:0}
-
 .toggle-track{position:absolute;inset:0;background:var(--border);border-radius:10px;transition:.2s}
-
 .toggle-knob{position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-
 .toggle-switch input:checked+.toggle-track{background:var(--accent)}
-
 .toggle-switch input:checked~.toggle-knob{left:19px}
-
 .hint-box{background:linear-gradient(135deg,rgba(61,95,224,.06),rgba(124,92,219,.04));border:1.5px solid rgba(61,95,224,.25);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:none}
-
 .hint-box.visible{display:block}
-
 .hint-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-
 .hint-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 1.4s infinite}
-
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
-
 .hint-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700}
-
 .hint-text{font-size:.82rem;color:var(--text);line-height:1.55}
-
 .hint-question{margin-top:10px;background:rgba(192,128,0,.07);border:1px solid rgba(192,128,0,.3);border-radius:7px;padding:9px 12px;font-size:.8rem;color:var(--warn);display:flex;align-items:flex-start;gap:8px}
-
 .hint-question::before{content:'💬';flex-shrink:0}
-
 .hint-steps{margin-top:10px;display:flex;flex-direction:column;gap:5px}
-
 .hint-step{display:flex;align-items:flex-start;gap:10px;font-size:.78rem;color:var(--muted)}
-
 .hint-step-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-
 .scene{display:none;padding:24px 24px 40px;max-width:1140px;margin:0 auto;animation:fadeIn .25s ease}
-
 .scene.on{display:block}
-
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
 .scene-tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:5px}
-
 .scene-title{font-size:1.55rem;font-weight:800;margin-bottom:5px;color:var(--text)}
-
 .scene-sub{color:var(--muted);font-size:.86rem;margin-bottom:20px}
-
 .card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-
 .card-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin-bottom:12px}
-
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-
 .btn{background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:700;transition:all .15s;box-shadow:0 2px 8px rgba(61,95,224,.25)}
-
 .btn:hover{background:#2d4ec0}
-
 .btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text);padding:7px 16px;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .15s}
-
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-
 .btn-sm{padding:5px 12px;font-size:.75rem}
-
 .btn-warn{background:#e07000;color:#fff}
-
 .btn-ghost{background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:7px 16px;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .15s}
-
 .btn-ghost:hover{background:var(--border)}
-
-/* SLIDER+NUMBER */
-
 .slider-row{display:grid;grid-template-columns:190px 1fr 70px;align-items:center;gap:10px;margin-bottom:14px}
-
 .slider-row label{font-size:.8rem;color:var(--text);font-weight:600;line-height:1.3}
-
 .slider-row label small{display:block;font-size:.67rem;font-weight:500;margin-top:2px}
-
 .slider-row input[type=range]{width:100%;accent-color:var(--accent);height:5px;cursor:pointer}
-
 .num-input-wrap{position:relative}
-
 .num-input-wrap input[type=number]{width:70px;padding:5px 20px 5px 8px;border:1.5px solid var(--border);border-radius:7px;font-size:.82rem;font-weight:700;color:var(--accent);background:#fff;text-align:right;-moz-appearance:textfield;transition:border-color .15s}
-
 .num-input-wrap input[type=number]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(61,95,224,.12)}
-
 .num-input-wrap input[type=number]::-webkit-outer-spin-button,.num-input-wrap input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-
 .num-input-wrap::after{content:'%';position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--muted);pointer-events:none;font-weight:600}
-
 .num-input-mio::after{content:'Mio'}
-
 .num-input-mio input[type=number]{padding-right:28px}
-
 .sl-green label small{color:#0e9e6b}.sl-green input[type=range]{accent-color:#0e9e6b}.sl-green .num-input-wrap input[type=number]{color:#0e9e6b}
-
 .sl-orange label small{color:var(--warn)}.sl-orange input[type=range]{accent-color:var(--warn)}.sl-orange .num-input-wrap input[type=number]{color:var(--warn)}
-
 .sl-amber label small{color:var(--accent4)}.sl-amber input[type=range]{accent-color:var(--accent4)}.sl-amber .num-input-wrap input[type=number]{color:var(--accent4)}
-
 .sl-red label small{color:var(--danger)}.sl-red input[type=range]{accent-color:var(--danger)}.sl-red .num-input-wrap input[type=number]{color:var(--danger)}
-
-/* TOTAL BAR */
-
 .total-bar{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:9px 14px;margin-top:6px;display:flex;align-items:center;gap:10px;font-size:.8rem}
-
 .total-bar-fill-wrap{flex:1;height:8px;background:#e8eaf2;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
-
 .total-bar-fill{height:100%;border-radius:4px;transition:width .3s,background .3s}
-
 .total-note{font-size:.69rem;color:var(--muted);margin-top:4px;font-style:italic}
-
 .gauge-big{font-size:2.6rem;font-weight:800;line-height:1;margin-top:4px}
-
 .lcr-formula{background:var(--surface2);border-radius:8px;padding:10px 14px;font-size:.76rem;color:var(--muted);font-family:'Courier New',monospace;margin-top:10px;border:1.5px solid var(--border)}
-
 .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:14px;font-size:.73rem;font-weight:700}
-
 .badge-ok{background:rgba(14,158,107,.1);color:#0a7a50;border:1.5px solid rgba(14,158,107,.35)}
-
 .badge-warn{background:rgba(192,128,0,.1);color:var(--warn);border:1.5px solid rgba(192,128,0,.3)}
-
 .badge-danger{background:rgba(217,48,48,.1);color:var(--danger);border:1.5px solid rgba(217,48,48,.3)}
-
 .scn-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-
 .scn-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px;font-size:.76rem}
-
 .scn-box h5{color:var(--accent);margin-bottom:5px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-
-/* STRESS */
-
 .snap-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
-
 .snap-btn{border:2px solid var(--border);background:#fff;color:var(--muted);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:700;transition:all .18s}
-
 .snap-btn:hover{border-color:var(--accent);color:var(--accent)}
-
 .snap-btn.s0{border-color:#3d5fe0;color:#3d5fe0;background:rgba(61,95,224,.06)}
-
 .snap-btn.s6{border-color:#7c5cdb;color:#7c5cdb;background:rgba(124,92,219,.06)}
-
 .snap-btn.s12{border-color:#c08000;color:#c08000;background:rgba(192,128,0,.06)}
-
 .snap-btn.s24{border-color:#e06b1a;color:#e06b1a;background:rgba(224,107,26,.06)}
-
 .snap-btn.s48{border-color:#d93030;color:#d93030;background:rgba(217,48,48,.06)}
-
-/* Dynamic stage bar — labels set by JS */
-
 .stages{display:flex;gap:4px;margin-bottom:12px}
-
-.stage-pill{flex:1;padding:5px 3px;border-radius:6px;text-align:center;font-size:.62rem;font-weight:700;border:1.5px solid var(--border);background:#fff;color:var(--muted);transition:all .22s;line-height:1.3;cursor:default}
-
+.stage-pill{flex:1;padding:5px 3px;border-radius:6px;text-align:center;font-size:.62rem;font-weight:700;border:1.5px solid var(--border);background:#fff;color:var(--muted);transition:all .22s;line-height:1.3}
 .stage-pill.active{color:#fff}
-
 .stage-pill[data-stg="0"].active{background:#3d5fe0;border-color:#3d5fe0}
-
 .stage-pill[data-stg="1"].active{background:#7c5cdb;border-color:#7c5cdb}
-
 .stage-pill[data-stg="2"].active{background:#c08000;border-color:#c08000}
-
 .stage-pill[data-stg="3"].active{background:#e06b1a;border-color:#e06b1a}
-
 .stage-pill[data-stg="4"].active{background:#d93030;border-color:#d93030}
-
 .stat-bar-wrap{margin-bottom:11px}
-
 .stat-bar-label{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px;font-weight:600;color:var(--text)}
-
 .stat-bar-track{height:9px;background:var(--surface2);border-radius:5px;overflow:hidden;border:1px solid var(--border)}
-
 .stat-bar-fill{height:100%;border-radius:5px;transition:width .2s}
-
 .stat-sub{font-size:.7rem;color:var(--muted);margin-top:2px}
-
 .outflow-card{background:linear-gradient(135deg,rgba(217,48,48,.05),rgba(224,107,26,.04));border:2px solid rgba(217,48,48,.2);border-radius:var(--radius);padding:14px;text-align:center}
-
 .outflow-val{font-size:1.9rem;font-weight:800;color:var(--danger)}
-
 .outflow-pct{font-size:.85rem;color:var(--accent4);margin-top:2px;font-weight:700}
-
-/* Status alert box */
-
 .status-alert{border-radius:9px;padding:10px 14px;font-size:.78rem;font-weight:600;margin-top:10px;line-height:1.45;border:2px solid;display:flex;align-items:flex-start;gap:8px}
-
 .status-alert.ok{background:rgba(14,158,107,.08);border-color:rgba(14,158,107,.3);color:#0a7050}
-
 .status-alert.watch{background:rgba(192,128,0,.08);border-color:rgba(192,128,0,.3);color:#8a5a00}
-
 .status-alert.stress{background:rgba(224,107,26,.09);border-color:rgba(224,107,26,.3);color:#a04000}
-
 .status-alert.critical{background:rgba(217,48,48,.09);border-color:rgba(217,48,48,.3);color:#a01010}
-
 .ref-box{background:rgba(192,128,0,.05);border:1.5px solid rgba(192,128,0,.2);border-radius:8px;padding:10px 14px;font-size:.74rem;color:var(--muted);margin-top:10px;line-height:1.55}
-
 .ref-box strong{color:var(--warn)}
-
 .cfg-panel{background:var(--surface);border-radius:10px;border:1.5px solid var(--border);padding:12px;margin-bottom:12px}
-
 .cfg-panel summary{font-size:.8rem;font-weight:700;cursor:pointer;color:var(--accent);list-style:none}
-
 .cfg-panel summary::before{content:'⚙ '}
-
 .cfg-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;align-items:center}
-
 .cfg-row label{font-size:.76rem;color:var(--muted)}
-
 .cfg-row input[type=number]{width:90px;background:#fff;border:1.5px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:.8rem}
-
 .cfg-row select{background:#fff;border:1.5px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:.78rem}
-
 .scrubber-wrap{padding:14px 16px;background:var(--surface);border-radius:10px;border:1.5px solid var(--border);margin-bottom:14px}
-
 .scrubber-wrap>label{font-size:.76rem;color:var(--muted);font-weight:600;display:block;margin-bottom:9px}
-
 #run-time-slider{width:100%;accent-color:var(--accent)}
-
 .scrubber-ticks{display:flex;justify-content:space-between;font-size:.66rem;color:var(--muted);margin-top:4px}
-
 #lcr-canvas{width:100%;height:210px;display:block;border-radius:10px;border:1.5px solid var(--border);background:transparent}
-
 .divider{height:1px;background:var(--border);margin:14px 0}
-
 .preset-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
-
 .info-box{background:rgba(61,95,224,.05);border:1.5px solid rgba(61,95,224,.18);border-radius:10px;padding:14px;font-size:.77rem;color:var(--muted);line-height:1.6}
-
 .info-box .ib-title{font-weight:700;color:var(--accent);margin-bottom:5px}
-
 @media(max-width:700px){.grid2{grid-template-columns:1fr}.stages{flex-wrap:wrap}.slider-row{grid-template-columns:140px 1fr 60px}}
-
 </style>
-
 </head>
-
 <body>
-
 <div class="topbar">
-
   <div class="logo">HWZ <span>· Brokered Deposits</span></div>
-
   <nav class="nav">
-
     <button class="nb on" onclick="go(0)">① LCR-Simulator</button>
-
     <button class="nb" onclick="go(1)">② Stresstest</button>
-
   </nav>
-
   <label class="mode-toggle">
-
     <span>Präsentationsmodus</span>
-
     <label class="toggle-switch">
-
       <input type="checkbox" id="pres-mode" onchange="togglePresMode()">
-
       <div class="toggle-track"></div>
-
       <div class="toggle-knob"></div>
-
     </label>
-
   </label>
-
 </div>
 
- 
-
-<!-- ═══════════════════ SCENE 0 · LCR ═══════════════════ -->
-
+<!-- SCENE 0 · LCR -->
 <div class="scene on" id="s0">
-
   <div class="hint-box" id="hint0">
-
     <div class="hint-header"><div class="hint-dot"></div><div class="hint-title">Präsentations-Tipp · LCR-Regulierung</div></div>
-
-    <div class="hint-text">Abflussraten nach Basel III / Del. VO (EU) 2015/61 kalibriert. BIS-Monitoring 2024: durchschnittliche LCR Group-1-Banken = 134,8%. «Standard» zeigt ca. 135%, «Konservativ» ca. 170%, «Aggressiv» ca. 80%.</div>
-
+    <div class="hint-text">Abflussraten nach Basel III / Del. VO (EU) 2015/61. BIS-Monitoring H2 2024: Ø LCR = 134,8%. «Standard» bildet diese Durchschnittsbank ab.</div>
     <div class="hint-steps">
-
-      <div class="hint-step"><div class="hint-step-num">1</div><span>«Standard» zeigt realistische Durchschnittsbank (BIS 2024: 135%)</span></div>
-
+      <div class="hint-step"><div class="hint-step-num">1</div><span>«Standard» zeigt realistische Durchschnittsbank (BIS 2024: ~135%)</span></div>
       <div class="hint-step"><div class="hint-step-num">2</div><span>Institutional Brokered auf 25% erhöhen → LCR fällt unter 100%</span></div>
-
       <div class="hint-step"><div class="hint-step-num">3</div><span>Zwei Szenarien speichern für Direktvergleich</span></div>
-
     </div>
-
-    <div class="hint-question">Frage: «BIS meldet 134,8% Durchschnitts-LCR. Wie gross ist der Unterschied wenn 20% Institutional statt 20% Stabile Retail?»</div>
-
+    <div class="hint-question">Frage: «Wie viel mehr HQLA braucht eine Bank mit 20% Institutional Brokered vs. 20% Stabile Retail?»</div>
   </div>
-
   <div class="scene-tag">Regulierung · CRR Art. 412 / Del. VO (EU) 2015/61 · BIS Monitoring H2 2024</div>
-
   <div class="scene-title">LCR-Simulator &amp; Liquiditätspuffer</div>
-
-  <div class="scene-sub">Slider ziehen oder Zahl direkt eintippen — jede Kategorie unabhängig von den anderen</div>
-
+  <div class="scene-sub">Slider ziehen oder Zahl direkt eintippen — jede Kategorie unabhängig</div>
   <div class="preset-row">
-
     <span style="font-size:.76rem;color:var(--muted)">Schnellauswahl:</span>
-
-    <button class="btn-outline btn-sm" onclick="setPreset('konservativ')" title="LCR ~170% · konservative Retail-Bank">Konservativ (~170%)</button>
-
-    <button class="btn-outline btn-sm" onclick="setPreset('standard')" title="LCR ~135% · BIS-Durchschnitt 2024">Standard (~135%)</button>
-
-    <button class="btn-outline btn-sm" onclick="setPreset('aggressiv')" title="LCR ~80% · brokerlastig, unter Druck">Aggressiv (~80%)</button>
-
-    <button class="btn-outline btn-sm" onclick="setPreset('krise')" title="LCR ~25% · stark brokerlastig, Krisenbank">Krise (~25%)</button>
-
+    <button class="btn-outline btn-sm" onclick="setPreset('konservativ')">Konservativ (~170%)</button>
+    <button class="btn-outline btn-sm" onclick="setPreset('standard')">Standard (~135%)</button>
+    <button class="btn-outline btn-sm" onclick="setPreset('aggressiv')">Aggressiv (~80%)</button>
+    <button class="btn-outline btn-sm" onclick="setPreset('krise')">Krise (~25%)</button>
   </div>
-
   <div class="grid2" style="align-items:start">
-
     <div style="display:flex;flex-direction:column;gap:14px">
-
       <div class="card">
-
         <div class="card-title">Einlagenstruktur — Basis 1 Mrd. EUR (Kategorien unabhängig einstellbar)</div>
-
         <div class="slider-row sl-green">
-
-          <label>Stabile Retail<small>Basel III Art. 24: 5% Abflussrate</small></label>
-
+          <label>Stabile Retail<small>Basel III Art. 24: 5%</small></label>
           <input type="range" id="sl-s" min="0" max="100" value="50" oninput="syncFromSlider('s',this.value)">
-
           <div class="num-input-wrap"><input type="number" id="ni-s" min="0" max="100" value="50" oninput="syncFromNumber('s',this.value)" onblur="clampNumber('s')"></div>
-
         </div>
-
         <div class="slider-row sl-orange">
-
-          <label>Wenig stabile Retail<small>Basel III Art. 25: 10% Abflussrate</small></label>
-
+          <label>Wenig stabile Retail<small>Basel III Art. 25: 10%</small></label>
           <input type="range" id="sl-ws" min="0" max="100" value="30" oninput="syncFromSlider('ws',this.value)">
-
           <div class="num-input-wrap"><input type="number" id="ni-ws" min="0" max="100" value="30" oninput="syncFromNumber('ws',this.value)" onblur="clampNumber('ws')"></div>
-
         </div>
-
         <div class="slider-row sl-amber">
-
-          <label>Retail Brokered<small>Basel III Art. 28: 15% Abflussrate</small></label>
-
+          <label>Retail Brokered<small>Basel III Art. 28: 15%</small></label>
           <input type="range" id="sl-b" min="0" max="100" value="12" oninput="syncFromSlider('b',this.value)">
-
           <div class="num-input-wrap"><input type="number" id="ni-b" min="0" max="100" value="12" oninput="syncFromNumber('b',this.value)" onblur="clampNumber('b')"></div>
-
         </div>
-
         <div class="slider-row sl-red">
-
-          <label>Institutional Brokered<small>Basel III Art. 31: 100% Abflussrate</small></label>
-
+          <label>Institutional Brokered<small>Basel III Art. 31: 100%</small></label>
           <input type="range" id="sl-i" min="0" max="100" value="8" oninput="syncFromSlider('i',this.value)">
-
           <div class="num-input-wrap"><input type="number" id="ni-i" min="0" max="100" value="8" oninput="syncFromNumber('i',this.value)" onblur="clampNumber('i')"></div>
-
         </div>
-
         <div class="total-bar">
-
           <span style="font-size:.75rem;color:var(--muted);white-space:nowrap;font-weight:600">Summe:</span>
-
           <div class="total-bar-fill-wrap"><div class="total-bar-fill" id="total-fill" style="width:100%"></div></div>
-
           <span style="font-size:.82rem;font-weight:700;min-width:42px;text-align:right" id="total-pct">100%</span>
-
         </div>
-
         <div class="total-note" id="total-note">✓ Summe = 100%</div>
-
         <div class="divider"></div>
-
         <div class="slider-row">
-
           <label><strong>HQLA-Puffer</strong><small style="color:var(--accent)">Hochliquide Aktiva (Mio EUR)</small></label>
-
           <input type="range" id="sl-h" min="0" max="500" value="155" oninput="syncFromSlider('h',this.value)">
-
           <div class="num-input-wrap num-input-mio"><input type="number" id="ni-h" min="0" max="500" value="155" oninput="syncFromNumber('h',this.value)" onblur="clampNumber('h')"></div>
-
         </div>
-
         <div style="display:flex;gap:8px;margin-top:10px">
-
           <button class="btn btn-sm" onclick="saveScn('A')">Szenario A speichern</button>
-
           <button class="btn-ghost btn-sm" onclick="saveScn('B')">Szenario B speichern</button>
-
         </div>
-
       </div>
-
       <div class="card" style="text-align:center">
-
         <div class="card-title">LCR — Liquidity Coverage Ratio</div>
-
         <div style="height:150px;position:relative"><canvas id="c3g"></canvas></div>
-
         <div class="gauge-big" id="lcr-val" style="color:#0e9e6b">135%</div>
-
         <div style="margin:8px 0 4px"><span id="lcr-badge" class="badge badge-ok">✓ Anforderung erfüllt</span></div>
-
         <div style="font-size:.7rem;color:var(--muted);margin-bottom:10px">Mindestanforderung: 100% · Ø BIS 2024: 134,8%</div>
-
         <div style="display:flex;justify-content:space-around;margin-bottom:4px">
-
           <div>
-
             <div style="font-size:.67rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Netto-Abflüsse 30T</div>
-
             <div style="font-size:1.25rem;font-weight:800;color:var(--danger)" id="lcr-out">115 Mio</div>
-
           </div>
-
           <div style="width:1px;background:var(--border)"></div>
-
           <div>
-
             <div style="font-size:.67rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">HQLA-Puffer</div>
-
             <div style="font-size:1.25rem;font-weight:800;color:#0e9e6b" id="lcr-hqla">155 Mio</div>
-
           </div>
-
         </div>
-
         <div class="lcr-formula" id="lcr-formula">LCR = HQLA / Netto-Abflüsse = 155 / 115 = 135%</div>
-
       </div>
-
     </div>
-
     <div style="display:flex;flex-direction:column;gap:14px">
-
       <div class="card">
-
         <div class="card-title">Liquiditätspuffer — Bankvisualisierung</div>
-
         <canvas id="lcr-canvas"></canvas>
-
         <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:.7rem;color:var(--muted)">
-
           <span>🟢 Tank voll = LCR ≥ 100%</span><span>🔴 Lücke = Mindestanforderung verletzt</span>
-
         </div>
-
       </div>
-
       <div class="scn-compare">
-
         <div class="scn-box"><h5>Szenario A</h5><div id="scn-a-txt" style="color:var(--muted)">Noch nicht gespeichert</div></div>
-
         <div class="scn-box"><h5>Szenario B</h5><div id="scn-b-txt" style="color:var(--muted)">Noch nicht gespeichert</div></div>
-
       </div>
-
       <div class="info-box">
-
         <div class="ib-title">ℹ Abflussraten gemäss Basel III / Del. VO (EU) 2015/61</div>
-
         <strong style="color:#0e9e6b">Stabile Retail 5%</strong> · <strong style="color:var(--warn)">Wenig stabil 10%</strong> · <strong style="color:var(--accent4)">Retail Brokered 15%</strong> · <strong style="color:var(--danger)">Institutional Brokered 100%</strong><br><br>
-
         BIS Monitoring H2 2024: Ø LCR Group-1-Banken = <strong>134,8%</strong>. «Standard»-Preset bildet diese Durchschnittsbank nach.
-
       </div>
-
     </div>
-
   </div>
-
 </div>
 
- 
-
-<!-- ═══════════════════ SCENE 1 · STRESSTEST ═══════════════════ -->
-
+<!-- SCENE 1 · STRESSTEST -->
 <div class="scene" id="s1">
-
   <div class="hint-box" id="hint1">
-
     <div class="hint-header"><div class="hint-dot"></div><div class="hint-title">Präsentations-Tipp · SVB-Fallstudie</div></div>
-
-    <div class="hint-text">Die Statusindikatoren rechts basieren auf Aufsichtskriterien (BRRD «Failing or Likely to Fail»), nicht bloss auf fixen Zeitpunkten. Bei einer Retail-lastigen Einlagenstruktur sind 12h und 24h noch kein Kollaps — das Werkzeug zeigt das.</div>
-
+    <div class="hint-text">Status-Schwellen basieren auf dem tatsächlichen Abfluss-%, nicht auf fixen Zeitpunkten. Bei retail-lastiger Einlagenstruktur gibt es bei T+24h keinen Kollaps.</div>
     <div class="hint-steps">
-
-      <div class="hint-step"><div class="hint-step-num">1</div><span>Vertrauensschock, Standard-Einlagen → zeige was SVB widerfuhr</span></div>
-
-      <div class="hint-step"><div class="hint-step-num">2</div><span>Dann Einlagen anpassen auf «nur Retail» → gleicher Schock, viel weniger Schaden</span></div>
-
-      <div class="hint-step"><div class="hint-step-num">3</div><span>Der Statusindikator rechts zeigt wann Behörden tatsächlich eingreifen würden</span></div>
-
+      <div class="hint-step"><div class="hint-step-num">1</div><span>Vertrauensschock starten → zeigt SVB-Szenario</span></div>
+      <div class="hint-step"><div class="hint-step-num">2</div><span>Einlagen auf nur Retail ändern → gleicher Schock, weit weniger Schaden</span></div>
+      <div class="hint-step"><div class="hint-step-num">3</div><span>Statusindikator zeigt wann Behörden tatsächlich eingreifen würden</span></div>
     </div>
-
-    <div class="hint-question">Frage: «SVB: 44h von Ankündigung bis Schliessen. Warum so schnell? Welche Einlagenkategorie macht das möglich?»</div>
-
+    <div class="hint-question">Frage: «SVB: 44h von Ankündigung bis Schliessen. Welche Einlagenkategorie macht das möglich?»</div>
   </div>
-
-  <div class="scene-tag">Antithese · Fallstudie SVB März 2023 · Fed Report 2023 · BIS/FSB Daten</div>
-
+  <div class="scene-tag">Antithese · Fallstudie SVB März 2023 · Fed Report 2023</div>
   <div class="scene-title">Bank-Run Simulation</div>
-
-  <div class="scene-sub">Ereignistyp wählen, dann ▶ starten — Status-Schwellen basieren auf tatsächlichem Abfluss, nicht auf fixen Zeitpunkten</div>
-
- 
-
-  <!-- Controls & scrubber oben -->
+  <div class="scene-sub">Ereignistyp wählen, dann ▶ starten — Status basiert auf tatsächlichem Abfluss</div>
 
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-
     <button class="btn" id="run-btn" onclick="toggleRun()">▶ Simulation starten</button>
-
     <button class="btn-ghost" onclick="resetRun()">↻ Zurücksetzen</button>
-
     <span style="font-size:.8rem;color:var(--muted)">Zeitpunkt:</span>
-
     <span style="font-size:1rem;font-weight:800;color:var(--accent)" id="run-time-disp">T+0h</span>
-
   </div>
-
   <div class="scrubber-wrap">
-
     <label>Zeitnavigation — direkt zu einem Zeitpunkt springen:</label>
-
     <input type="range" id="run-time-slider" min="0" max="48" step="1" value="0" oninput="jumpToTime(+this.value)">
-
     <div class="scrubber-ticks"><span>T+0h</span><span>T+6h</span><span>T+12h</span><span>T+18h</span><span>T+24h</span><span>T+30h</span><span>T+36h</span><span>T+42h</span><span>T+48h</span></div>
-
   </div>
-
   <div class="snap-row">
-
     <button class="snap-btn s0" onclick="jumpToTime(0)">T+0h</button>
-
     <button class="snap-btn s6" onclick="jumpToTime(6)">T+6h</button>
-
     <button class="snap-btn s12" onclick="jumpToTime(12)">T+12h</button>
-
     <button class="snap-btn s24" onclick="jumpToTime(24)">T+24h</button>
-
     <button class="snap-btn s48" onclick="jumpToTime(48)">T+48h</button>
-
   </div>
-
- 
-
-  <!-- Event stages (dynamic labels) -->
-
-  <div class="stages" id="stage-bar">
-
-    <div class="stage-pill active" data-stg="0" id="stg0">–</div>
-
-    <div class="stage-pill" data-stg="1" id="stg1">–</div>
-
-    <div class="stage-pill" data-stg="2" id="stg2">–</div>
-
-    <div class="stage-pill" data-stg="3" id="stg3">–</div>
-
-    <div class="stage-pill" data-stg="4" id="stg4">–</div>
-
+  <div class="stages">
+    <div class="stage-pill active" data-stg="0" id="stg0">Normal</div>
+    <div class="stage-pill" data-stg="1" id="stg1">Warnung</div>
+    <div class="stage-pill" data-stg="2" id="stg2">Stress</div>
+    <div class="stage-pill" data-stg="3" id="stg3">Krise</div>
+    <div class="stage-pill" data-stg="4" id="stg4">Kritisch</div>
   </div>
-
- 
+  <!-- Case Presets -->
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)">
+    <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin-bottom:10px">Fallstudien-Presets (Einlagen &amp; Ereignistyp vorausgefüllt)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <button class="btn btn-sm" onclick="loadCase('svb')" style="background:#d93030">🏦 SVB März 2023</button>
+      <button class="btn btn-sm" onclick="loadCase('cs')" style="background:#3d5fe0">🏦 Credit Suisse März 2023</button>
+      <button class="btn-ghost btn-sm" onclick="loadCase('custom')">✏️ Eigene Eingabe</button>
+    </div>
+    <div id="case-factbox" style="font-size:.76rem;color:var(--muted);line-height:1.55;padding:10px 12px;background:var(--surface2);border-radius:7px;border:1px solid var(--border);display:none"></div>
+  </div>
 
   <details class="cfg-panel" open>
-
     <summary>Ereignistyp &amp; Einlagen konfigurieren</summary>
-
     <div class="cfg-row">
-
       <label>Ereignistyp</label>
-
       <select id="cfg-type" onchange="onEventTypeChange()">
-
         <option value="trust">Vertrauensschock (SVB-Typ)</option>
-
         <option value="rate">Zinsanstieg-Panik</option>
-
         <option value="credit">Bonitätsverschlechterung</option>
-
         <option value="sys">Systemkrise</option>
-
       </select>
-
       <label>Stabile Retail (Mio)</label>
-
       <input type="number" id="cfg-s" value="400" min="0" step="50">
-
       <label>Retail Brokered (Mio)</label>
-
       <input type="number" id="cfg-b" value="300" min="0" step="50">
-
       <label>Institutional Brokered (Mio)</label>
-
       <input type="number" id="cfg-i" value="200" min="0" step="50">
-
       <label>Geschwindigkeit</label>
-
       <select id="cfg-spd">
-
         <option value="700">1× (langsam)</option>
-
         <option value="300" selected>2× (Standard)</option>
-
         <option value="120">5× (schnell)</option>
-
         <option value="60">10× (Präsentation)</option>
-
       </select>
-
     </div>
-
     <div id="event-desc" style="margin-top:10px;font-size:.77rem;color:var(--muted);line-height:1.5;padding:8px 12px;background:var(--surface2);border-radius:7px;border:1px solid var(--border)"></div>
-
   </details>
 
- 
-
-  <!-- Chart oben, vor der Bank-Animation -->
-
+  <!-- Chart above bank -->
   <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 14px 8px;margin-bottom:14px;box-shadow:var(--shadow)">
-
-    <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin-bottom:6px">Einlagenabfluss nach Typ — % verbleibend (volle Kurve sichtbar vor Animation)</div>
-
+    <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin-bottom:6px">Einlagenabfluss — % verbleibend (volle Kurven vor Animation sichtbar)</div>
     <div style="height:180px"><canvas id="c5"></canvas></div>
-
   </div>
-
- 
 
   <div class="grid2" style="align-items:start">
-
     <div>
-
       <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin-bottom:7px">Bankgebäude-Visualisierung</div>
-
       <canvas id="bank-canvas" style="width:100%;height:240px;display:block;border-radius:10px;border:1.5px solid var(--border)"></canvas>
-
     </div>
-
     <div>
-
       <div class="card" style="margin-bottom:12px">
-
         <div class="card-title">Einlagentypen — Verbleibend</div>
-
         <div class="stat-bar-wrap">
-
           <div class="stat-bar-label"><span>Stabile Retail</span><span id="ss-pct" style="color:#0e9e6b">100.0%</span></div>
-
           <div class="stat-bar-track"><div class="stat-bar-fill" id="ss-bar" style="width:100%;background:#0e9e6b"></div></div>
-
           <div class="stat-sub" id="ss-mio">400 Mio EUR verbleibend</div>
-
         </div>
-
         <div class="stat-bar-wrap">
-
           <div class="stat-bar-label"><span>Retail Brokered</span><span id="sb-pct" style="color:var(--accent)">100.0%</span></div>
-
           <div class="stat-bar-track"><div class="stat-bar-fill" id="sb-bar" style="width:100%;background:var(--accent)"></div></div>
-
           <div class="stat-sub" id="sb-mio">300 Mio EUR verbleibend</div>
-
         </div>
-
         <div class="stat-bar-wrap">
-
           <div class="stat-bar-label"><span>Institutional Brokered</span><span id="si-pct" style="color:var(--danger)">100.0%</span></div>
-
           <div class="stat-bar-track"><div class="stat-bar-fill" id="si-bar" style="width:100%;background:var(--danger)"></div></div>
-
           <div class="stat-sub" id="si-mio">200 Mio EUR verbleibend</div>
-
         </div>
-
       </div>
-
       <div class="outflow-card">
-
         <div class="card-title" style="color:var(--accent4)">Gesamtabfluss kumuliert</div>
-
         <div class="outflow-val" id="tot-out-mio">0 Mio EUR</div>
-
         <div class="outflow-pct" id="tot-out-pct">0% des Gesamtportfolios</div>
-
       </div>
-
-      <!-- Dynamic status alert — replaces fixed stage labels -->
-
       <div id="status-alert" class="status-alert ok" style="margin-top:10px">
-
         <span id="status-icon">✅</span>
-
-        <div><strong id="status-title">Normal</strong><br><span id="status-desc" style="font-weight:400;font-size:.73rem"></span></div>
-
+        <div><strong id="status-title">Normal</strong><br><span id="status-desc" style="font-weight:400;font-size:.73rem">Kein signifikanter Abfluss.</span></div>
       </div>
-
       <div class="ref-box" style="margin-top:10px">
-
-        <strong>SVB (Vertrauensschock):</strong> $42 Mrd. (25%) an einem Tag · Schliessungsentscheid 44h nach erstem Abfluss (Fed Report 2023)<br>
-
-        FSB/FRB: Median Bank Run = <strong>24%</strong> der Einlagen · Washington Mutual: 10% über 16 Tage
-
+        <strong>SVB (Vertrauensschock):</strong> $42 Mrd. (25%) an einem Tag · Schliessungsentscheid 44h nach erstem Abfluss<br>
+        FSB/FRB: Median Bank Run = <strong>24%</strong> · Washington Mutual: 10% über 16 Tage
       </div>
-
     </div>
-
   </div>
-
 </div>
 
- 
-
-<!-- ═══════════════════ JS ═══════════════════ -->
-
 <script>
+/* ══ NAV ══ */
+let presMode = false;
+let runChartReady = false;
+let runChart = null;
 
-/* NAV */
-
-let presMode=false;
-
-function togglePresMode(){presMode=document.getElementById('pres-mode').checked;document.querySelectorAll('.hint-box').forEach(b=>b.classList.toggle('visible',presMode));}
-
-function go(n){document.querySelectorAll('.scene').forEach((s,i)=>s.classList.toggle('on',i===n));document.querySelectorAll('.nb').forEach((b,i)=>b.classList.toggle('on',i===n));if(n===0){calcLCR();startLCRAnim();}if(n===1){stopLCRAnim();onEventTypeChange();setTimeout(startBankAnim,60);}else stopBankAnim();}
-
-function rrect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
-
- 
-
-/* ════════ LCR SLIDERS ════════ */
-
-const MAX={s:100,ws:100,b:100,i:100,h:500};
-
-function syncFromSlider(k,v){v=Math.min(Math.max(+v,0),MAX[k]);document.getElementById('sl-'+k).value=v;document.getElementById('ni-'+k).value=v;calcLCR();}
-
-function syncFromNumber(k,v){let n=+v;if(isNaN(n))return;n=Math.min(Math.max(n,0),MAX[k]);document.getElementById('sl-'+k).value=n;calcLCR();}
-
-function clampNumber(k){let v=Math.min(Math.max(+document.getElementById('ni-'+k).value||0,0),MAX[k]);document.getElementById('ni-'+k).value=v;document.getElementById('sl-'+k).value=v;calcLCR();}
-
-function getVal(k){return +document.getElementById('sl-'+k).value||0;}
-
- 
-
-/* Presets calibrated to BIS 2024 data:
-
-   Standard: Ø LCR ~135% (BIS Group-1 H2 2024 = 134.8%)
-
-   Konservativ: ~170% (retail-heavy savings bank)
-
-   Aggressiv: ~80% (brokered-heavy, near breach)
-
-   Krise: ~25% (heavy institutional brokered, crisis scenario) */
-
-function setPreset(p){
-
-  // [stabile%, wenig-stabil%, retail-brokered%, institutional%, HQLA-Mio]
-
-  // out = 1000*(s*.05 + ws*.10 + b*.15 + i*1.00) / 100
-
-  // Standard: 50*.05+30*.10+12*.15+8*1 = 2.5+3+1.8+8 = 15.3 Mio per 100 → ×10 → out=153 Mio; HQLA=205 → LCR=134%
-
-  // Konservativ: 65*.05+25*.10+8*.15+2*1 = 3.25+2.5+1.2+2=8.95 → ×10=89.5 Mio; HQLA=152 → LCR=170%
-
-  // Aggressiv: 25*.05+20*.10+25*.15+30*1 = 1.25+2+3.75+30=37 → ×10=370 Mio; HQLA=295 → LCR=80%
-
-  // Krise: 10*.05+10*.10+20*.15+60*1 = 0.5+1+3+60=64.5 → ×10=645 Mio; HQLA=160 → LCR=25%
-
-  const P={
-
-    konservativ:[65,25,8,2,152],
-
-    standard:   [50,30,12,8,205],
-
-    aggressiv:  [25,20,25,30,295],
-
-    krise:      [10,10,20,60,160]
-
-  };
-
-  const v=P[p],keys=['s','ws','b','i','h'];
-
-  keys.forEach((k,i)=>{document.getElementById('sl-'+k).value=v[i];document.getElementById('ni-'+k).value=v[i];});
-
-  calcLCR();
-
+function togglePresMode() {
+  presMode = document.getElementById('pres-mode').checked;
+  document.querySelectorAll('.hint-box').forEach(b => b.classList.toggle('visible', presMode));
 }
 
- 
+function go(n) {
+  document.querySelectorAll('.scene').forEach((s, i) => s.classList.toggle('on', i === n));
+  document.querySelectorAll('.nb').forEach((b, i) => b.classList.toggle('on', i === n));
+  if (n === 0) {
+    stopBankAnim();
+    calcLCR();
+    startLCRAnim();
+  }
+  if (n === 1) {
+    stopLCRAnim();
+    setTimeout(function() {
+      if (!runChartReady) initRunChart();
+      onEventTypeChange();
+      startBankAnim();
+    }, 100);
+  }
+}
 
-const gaugeChart=new Chart(document.getElementById('c3g'),{
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r); ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r); ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r); ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
+}
 
-  type:'doughnut',
+/* ══ LCR SLIDERS ══ */
+var MAXV = {s:100, ws:100, b:100, i:100, h:500};
+function syncFromSlider(k, v) {
+  v = Math.min(Math.max(+v,0), MAXV[k]);
+  document.getElementById('sl-'+k).value = v;
+  document.getElementById('ni-'+k).value = v;
+  calcLCR();
+}
+function syncFromNumber(k, v) {
+  var n = +v; if (isNaN(n)) return;
+  n = Math.min(Math.max(n, 0), MAXV[k]);
+  document.getElementById('sl-'+k).value = n;
+  calcLCR();
+}
+function clampNumber(k) {
+  var v = Math.min(Math.max(+document.getElementById('ni-'+k).value||0, 0), MAXV[k]);
+  document.getElementById('ni-'+k).value = v;
+  document.getElementById('sl-'+k).value = v;
+  calcLCR();
+}
+function getVal(k) { return +document.getElementById('sl-'+k).value || 0; }
 
-  data:{datasets:[{data:[135,65],backgroundColor:['#0e9e6b','#e8eaf2'],borderWidth:0,circumference:180,rotation:270}]},
+// Presets calibrated to BIS 2024 (avg LCR Group-1 = 134.8%)
+// out = 1000*(s*0.05+ws*0.10+b*0.15+i*1.00)/100
+// konservativ: out=89  → LCR≈171%
+// standard:    out=153 → LCR≈134%
+// aggressiv:   out=370 → LCR≈80%
+// krise:       out=645 → LCR≈25%
+function setPreset(p) {
+  var P = {
+    konservativ: [65, 25,  8,  2, 152],
+    standard:    [50, 30, 12,  8, 205],
+    aggressiv:   [25, 20, 25, 30, 295],
+    krise:       [10, 10, 20, 60, 160]
+  };
+  var v = P[p], keys = ['s','ws','b','i','h'];
+  keys.forEach(function(k, i) {
+    document.getElementById('sl-'+k).value = v[i];
+    document.getElementById('ni-'+k).value = v[i];
+  });
+  calcLCR();
+}
 
-  options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}}}
-
+var gaugeChart = new Chart(document.getElementById('c3g'), {
+  type: 'doughnut',
+  data: {datasets:[{data:[135,65], backgroundColor:['#0e9e6b','#e8eaf2'], borderWidth:0, circumference:180, rotation:270}]},
+  options: {responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{legend:{display:false},tooltip:{enabled:false}}}
 });
 
-function calcLCR(){
-
-  const s=getVal('s'),ws=getVal('ws'),b=getVal('b'),i=getVal('i'),h=getVal('h');
-
-  const total=s+ws+b+i;
-
-  const fill=document.getElementById('total-fill'),tpct=document.getElementById('total-pct'),tnote=document.getElementById('total-note');
-
-  fill.style.width=Math.min(total,150)/150*100+'%';
-
-  if(total<100){fill.style.background='#c08000';tpct.style.color='#c08000';tpct.textContent=total+'%';tnote.textContent='⚠ Summe < 100% — restliche Einlagen nicht klassifiziert';tnote.style.color='#c08000';}
-
-  else if(total===100){fill.style.background='#0e9e6b';tpct.style.color='#0e9e6b';tpct.textContent='100%';tnote.textContent='✓ Summe = 100% — alle Einlagen klassifiziert';tnote.style.color='#0e9e6b';}
-
-  else{fill.style.background='#d93030';tpct.style.color='#d93030';tpct.textContent=total+'%';tnote.textContent='⚠ Summe > 100% — Kategorien überlappen';tnote.style.color='#d93030';}
-
-  // Basel III exact: Art.24=5%, Art.25=10%, Art.28=15%, Art.31=100%
-
-  const out=Math.round(1000*(s/100*0.05+ws/100*0.10+b/100*0.15+i/100*1.00));
-
-  const lcr=out===0?999:Math.round(h/out*100);
-
-  document.getElementById('lcr-val').textContent=lcr+'%';
-
-  document.getElementById('lcr-val').style.color=lcr>=100?'#0e9e6b':lcr>=85?'#c08000':'#d93030';
-
-  document.getElementById('lcr-out').textContent=out+' Mio';
-
-  document.getElementById('lcr-hqla').textContent=h+' Mio';
-
-  document.getElementById('lcr-formula').textContent=`LCR = HQLA / Netto-Abflüsse = ${h} / ${out} = ${lcr}%`;
-
-  const badge=document.getElementById('lcr-badge');
-
-  if(lcr>=100){badge.className='badge badge-ok';badge.textContent='✓ Anforderung erfüllt';}
-
-  else if(lcr>=85){badge.className='badge badge-warn';badge.textContent='⚠ Kurzfristige Unterschreitung';}
-
-  else{badge.className='badge badge-danger';badge.textContent='✗ Unter Mindestanforderung';}
-
-  const pct=Math.min(lcr/300*100,100);
-
-  gaugeChart.data.datasets[0].data=[pct,100-pct];
-
-  gaugeChart.data.datasets[0].backgroundColor=[lcr>=100?'#0e9e6b':lcr>=85?'#c08000':'#d93030','#e8eaf2'];
-
+function calcLCR() {
+  var s=getVal('s'), ws=getVal('ws'), b=getVal('b'), i=getVal('i'), h=getVal('h');
+  var total = s+ws+b+i;
+  var fill=document.getElementById('total-fill'), tpct=document.getElementById('total-pct'), tnote=document.getElementById('total-note');
+  fill.style.width = Math.min(total,150)/150*100+'%';
+  if (total < 100)       { fill.style.background='#c08000'; tpct.style.color='#c08000'; tpct.textContent=total+'%'; tnote.textContent='⚠ Summe < 100% — restliche Einlagen nicht klassifiziert'; tnote.style.color='#c08000'; }
+  else if (total === 100){ fill.style.background='#0e9e6b'; tpct.style.color='#0e9e6b'; tpct.textContent='100%'; tnote.textContent='✓ Summe = 100% — alle Einlagen klassifiziert'; tnote.style.color='#0e9e6b'; }
+  else                   { fill.style.background='#d93030'; tpct.style.color='#d93030'; tpct.textContent=total+'%'; tnote.textContent='⚠ Summe > 100% — Kategorien überlappen'; tnote.style.color='#d93030'; }
+  var out = Math.round(1000*(s/100*0.05 + ws/100*0.10 + b/100*0.15 + i/100*1.00));
+  var lcr = out === 0 ? 999 : Math.round(h/out*100);
+  document.getElementById('lcr-val').textContent = lcr+'%';
+  document.getElementById('lcr-val').style.color = lcr>=100?'#0e9e6b':lcr>=85?'#c08000':'#d93030';
+  document.getElementById('lcr-out').textContent = out+' Mio';
+  document.getElementById('lcr-hqla').textContent = h+' Mio';
+  document.getElementById('lcr-formula').textContent = 'LCR = HQLA / Netto-Abflüsse = '+h+' / '+out+' = '+lcr+'%';
+  var badge = document.getElementById('lcr-badge');
+  if (lcr >= 100)     { badge.className='badge badge-ok';     badge.textContent='✓ Anforderung erfüllt'; }
+  else if (lcr >= 85) { badge.className='badge badge-warn';   badge.textContent='⚠ Kurzfristige Unterschreitung'; }
+  else                { badge.className='badge badge-danger'; badge.textContent='✗ Unter Mindestanforderung'; }
+  var pct = Math.min(lcr/300*100, 100);
+  gaugeChart.data.datasets[0].data = [pct, 100-pct];
+  gaugeChart.data.datasets[0].backgroundColor = [lcr>=100?'#0e9e6b':lcr>=85?'#c08000':'#d93030','#e8eaf2'];
   gaugeChart.update('none');
-
-  window._lcrData={out,h,lcr,s,ws,b,i};
-
+  window._lcrData = {out:out, h:h, lcr:lcr, s:s, ws:ws, b:b, i:i};
 }
 
-function saveScn(k){const d=window._lcrData||{},lcr=document.getElementById('lcr-val').textContent,ok=parseInt(lcr)>=100;document.getElementById('scn-'+k.toLowerCase()+'-txt').innerHTML=`Stabil: ${d.s||0}% · W.st.: ${d.ws||0}% · Brokered: ${d.b||0}% · Inst.: ${d.i||0}%<br>HQLA: ${d.h||0} Mio · <strong style="color:${ok?'#0e9e6b':'#d93030'}">LCR: ${lcr}</strong>`;}
-
+function saveScn(k) {
+  var d = window._lcrData||{}, lcr = document.getElementById('lcr-val').textContent, ok = parseInt(lcr)>=100;
+  document.getElementById('scn-'+k.toLowerCase()+'-txt').innerHTML =
+    'Stabil: '+(d.s||0)+'% · W.st.: '+(d.ws||0)+'% · Brokered: '+(d.b||0)+'% · Inst.: '+(d.i||0)+'%<br>HQLA: '+(d.h||0)+' Mio · <strong style="color:'+(ok?'#0e9e6b':'#d93030')+'">LCR: '+lcr+'</strong>';
+}
 calcLCR();
 
- 
+/* ══ LCR CARTOON BANK VIZ ══ */
+var lcrWave = 0, lcrRafId = null;
 
-/* ════════ LCR CARTOON BANK VIZ ════════ */
-
-let lcrWave=0,lcrRafIdInner=null;
-
-function drawCartoonLCRBank(){
-
-  const cvs=document.getElementById('lcr-canvas');if(!cvs)return;
-
-  if(!cvs._sz){cvs.width=cvs.offsetWidth||540;cvs.height=210;cvs._sz=true;}
-
-  const ctx=cvs.getContext('2d'),W=cvs.width,H=cvs.height,d=window._lcrData||{out:115,h:155,lcr:135};
-
-  lcrWave+=.035;ctx.clearRect(0,0,W,H);
-
-  const skyG=ctx.createLinearGradient(0,0,0,H);skyG.addColorStop(0,'#ddeeff');skyG.addColorStop(1,'#eef4ff');ctx.fillStyle=skyG;rrect(ctx,0,0,W,H,10);ctx.fill();
-
-  const ok=d.lcr>=100;
-
-  const bX=18,bY=18,bW=108,bH=158;
-
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.12)';ctx.shadowBlur=10;ctx.shadowOffsetY=4;rrect(ctx,bX,bY+28,bW,bH-28,5);const bG=ctx.createLinearGradient(bX,bY+28,bX+bW,bY+bH);bG.addColorStop(0,'#e8eeff');bG.addColorStop(1,'#d0d8f5');ctx.fillStyle=bG;ctx.fill();ctx.restore();
-
-  rrect(ctx,bX,bY+28,bW,bH-28,5);ctx.strokeStyle='#8899cc';ctx.lineWidth=2.5;ctx.stroke();
-
-  ctx.beginPath();ctx.moveTo(bX-7,bY+30);ctx.lineTo(bX+bW/2,bY+5);ctx.lineTo(bX+bW+7,bY+30);ctx.closePath();const rG=ctx.createLinearGradient(bX,bY+5,bX,bY+32);rG.addColorStop(0,'#b0c0f0');rG.addColorStop(1,'#98aae0');ctx.fillStyle=rG;ctx.fill();ctx.strokeStyle='#7088cc';ctx.lineWidth=2.5;ctx.stroke();
-
-  for(let c=0;c<3;c++){const cx=bX+14+c*(bW-28)/2-5;rrect(ctx,cx,bY+32,10,bH-62,3);ctx.fillStyle='#c8d4f0';ctx.fill();ctx.strokeStyle='#9aacdc';ctx.lineWidth=2;ctx.stroke();rrect(ctx,cx-3,bY+30,16,5,2);ctx.fillStyle='#b0c4e8';ctx.fill();}
-
-  for(let s2=0;s2<3;s2++){rrect(ctx,bX-s2*5,bY+bH-s2*6,bW+s2*10,6,2);ctx.fillStyle=`hsl(225,35%,${80-s2*5}%)`;ctx.fill();ctx.strokeStyle='#a0b0d8';ctx.lineWidth=1.5;ctx.stroke();}
-
-  [[bX+14,bY+48],[bX+bW-34,bY+48],[bX+14,bY+78],[bX+bW-34,bY+78]].forEach(([wx,wy])=>{rrect(ctx,wx,wy,18,16,3);const wG=ctx.createLinearGradient(wx,wy,wx+18,wy+16);wG.addColorStop(0,'#aad4ff');wG.addColorStop(1,'#88b8f0');ctx.fillStyle=wG;ctx.fill();ctx.strokeStyle='#6699cc';ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.moveTo(wx+3,wy+2);ctx.lineTo(wx+7,wy+2);ctx.lineTo(wx+3,wy+6);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.6)';ctx.fill();ctx.strokeStyle='rgba(100,160,220,.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(wx+9,wy+1);ctx.lineTo(wx+9,wy+15);ctx.stroke();ctx.beginPath();ctx.moveTo(wx+1,wy+8);ctx.lineTo(wx+17,wy+8);ctx.stroke();});
-
-  rrect(ctx,bX+bW/2-11,bY+bH-36,22,25,3);ctx.fillStyle='#7080c0';ctx.fill();ctx.strokeStyle='#5060a8';ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.arc(bX+bW/2+5,bY+bH-23,2.5,0,Math.PI*2);ctx.fillStyle='#ffd700';ctx.fill();
-
-  ctx.font='bold 12px "Segoe UI",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeStyle='#8899cc';ctx.lineWidth=3;ctx.strokeText('BANK',bX+bW/2,bY+17);ctx.fillStyle='#3a4ea0';ctx.fillText('BANK',bX+bW/2,bY+17);
-
-  const pX=bX+bW+2,pY2=bY+bH-52,tX=bX+bW+50,tY=10,tW=W-tX-14,tH=H-20;
-
-  ctx.beginPath();ctx.moveTo(pX,pY2-5);ctx.lineTo(pX,pY2+5);ctx.lineTo(tX-2,tY+tH*.4+5);ctx.lineTo(tX-2,tY+tH*.4-5);ctx.closePath();ctx.fillStyle='#b0c0e0';ctx.fill();ctx.strokeStyle='#8898c8';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(pX,pY2-5);ctx.lineTo(tX-2,tY+tH*.4-5);ctx.stroke();ctx.beginPath();ctx.moveTo(pX,pY2+5);ctx.lineTo(tX-2,tY+tH*.4+5);ctx.stroke();
-
-  const nd=Date.now()/800;for(let dr=0;dr<4;dr++){const pr=(nd*.4+dr*.25)%1,px2=pX+pr*(tX-pX-2),py2_=pY2+pr*(tY+tH*.4-pY2);ctx.beginPath();ctx.arc(px2,py2_,3.5,0,Math.PI*2);ctx.fillStyle=ok?'rgba(14,158,107,.7)':'rgba(217,48,48,.65)';ctx.fill();ctx.strokeStyle=ok?'rgba(10,120,80,.8)':'rgba(180,30,30,.8)';ctx.lineWidth=1.5;ctx.stroke();}
-
-  rrect(ctx,tX,tY,tW,tH,10);ctx.fillStyle='#eef2fa';ctx.fill();ctx.strokeStyle='#a8b8dc';ctx.lineWidth=2.5;ctx.stroke();
-
-  for(let v=0;v<=500;v+=100){const gy=tY+tH-tH*(v/500);ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(140,160,200,.4)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(tX+2,gy);ctx.lineTo(tX+tW-2,gy);ctx.stroke();ctx.setLineDash([]);if(v>0){ctx.fillStyle='rgba(80,100,160,.6)';ctx.font='bold 9px Segoe UI';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(v+' Mio',tX+5,gy-7);}}
-
-  const reqY=tY+tH*(1-Math.min(d.out/500,.97));ctx.setLineDash([7,4]);ctx.strokeStyle='rgba(217,48,48,.8)';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(tX+2,reqY);ctx.lineTo(tX+tW-2,reqY);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#d93030';ctx.font='bold 9px Segoe UI';ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('Req. '+d.out+' Mio',tX+tW-4,reqY-2);
-
-  const hR=Math.min(d.h/500,.98),wH=tH*hR,wY=tY+tH-wH;
-
-  ctx.save();rrect(ctx,tX+2,tY+2,tW-4,tH-4,8);ctx.clip();const wG2=ctx.createLinearGradient(0,wY,0,tY+tH);if(ok){wG2.addColorStop(0,'rgba(14,158,107,.25)');wG2.addColorStop(1,'rgba(14,158,107,.5)');}else{wG2.addColorStop(0,'rgba(217,48,48,.2)');wG2.addColorStop(1,'rgba(217,48,48,.42)');}ctx.fillStyle=wG2;ctx.fillRect(tX+2,wY,tW-4,wH+(tY+tH)-wY);ctx.beginPath();ctx.moveTo(tX+2,wY+4);for(let x=tX+2;x<=tX+tW-2;x+=3){const amp=2+hR*4;ctx.lineTo(x,wY+Math.sin((x-tX)*.055+lcrWave)*amp+Math.sin((x-tX)*.11-lcrWave*.8)*amp*.5);}ctx.lineTo(tX+tW-2,tY+tH-2);ctx.lineTo(tX+2,tY+tH-2);ctx.closePath();ctx.fillStyle=ok?'rgba(14,158,107,.12)':'rgba(217,48,48,.1)';ctx.fill();if(hR>0.1){const bt=Date.now()/1200;for(let b2=0;b2<4;b2++){const bx2=tX+15+(b2*67)%(tW-30),bP=(bt+b2*.7)%1,by2=tY+tH-4-bP*wH*.8;if(by2>wY+5){ctx.beginPath();ctx.arc(bx2,by2,2.5+b2%2,0,Math.PI*2);ctx.fillStyle=ok?'rgba(14,158,107,.2)':'rgba(217,48,48,.2)';ctx.fill();}}}ctx.restore();
-
-  if(wH>34){const ly=Math.min(wY+wH/2,tY+tH-16);rrect(ctx,tX+tW/2-57,ly-11,114,22,8);ctx.fillStyle=ok?'rgba(14,158,107,.15)':'rgba(217,48,48,.12)';ctx.fill();ctx.strokeStyle=ok?'#0e9e6b':'#d93030';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle=ok?'#0a7a50':'#b02020';ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(`💧 HQLA ${d.h} Mio`,tX+tW/2,ly);}
-
-  if(!ok&&wY>reqY+12){const ax=tX+tW-14;ctx.strokeStyle='rgba(217,48,48,.8)';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(ax,reqY+4);ctx.lineTo(ax,wY-4);ctx.stroke();[[ax,reqY+4,-1],[ax,wY-4,1]].forEach(([x,y,dir])=>{ctx.fillStyle='rgba(217,48,48,.8)';ctx.beginPath();ctx.moveTo(x-5,y+dir*8);ctx.lineTo(x,y+dir*2);ctx.lineTo(x+5,y+dir*8);ctx.closePath();ctx.fill();});if(wY-reqY>24){const midY=(reqY+wY)/2;rrect(ctx,ax-42,midY-9,80,18,5);ctx.fillStyle='rgba(255,230,230,.95)';ctx.fill();ctx.strokeStyle='rgba(217,48,48,.4)';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='#d93030';ctx.font='bold 9px Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(`-${d.out-d.h} Mio`,ax,midY);}}
-
-  const lcrN=d.lcr,bc=lcrN>=100?'#0e9e6b':lcrN>=85?'#c08000':'#d93030',bb=lcrN>=100?'rgba(14,158,107,.1)':lcrN>=85?'rgba(192,128,0,.08)':'rgba(217,48,48,.08)';
-
-  rrect(ctx,tX+tW/2-50,tY+5,100,26,8);ctx.fillStyle=bb;ctx.fill();ctx.strokeStyle=bc;ctx.lineWidth=2;ctx.stroke();ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=2.5;ctx.font='bold 12px Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeText(`LCR: ${lcrN}%`,tX+tW/2,tY+18);ctx.fillStyle=bc;ctx.fillText(`LCR: ${lcrN}%`,tX+tW/2,tY+18);
-
-  const face=lcrN>=100?'😊':lcrN>=85?'😰':'😱';ctx.font='19px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(face,bX+bW/2,bY-6+Math.sin(lcrWave*1.8)*(lcrN<100?3:1));
-
+function drawLCRBank() {
+  var cvs = document.getElementById('lcr-canvas'); if (!cvs) return;
+  if (!cvs._sz) { cvs.width=cvs.offsetWidth||540; cvs.height=210; cvs._sz=true; }
+  var ctx=cvs.getContext('2d'), W=cvs.width, H=cvs.height;
+  var d=window._lcrData||{out:115,h:155,lcr:135};
+  lcrWave += 0.035; ctx.clearRect(0,0,W,H);
+  var skyG=ctx.createLinearGradient(0,0,0,H); skyG.addColorStop(0,'#ddeeff'); skyG.addColorStop(1,'#eef4ff');
+  ctx.fillStyle=skyG; rrect(ctx,0,0,W,H,10); ctx.fill();
+  var ok = d.lcr >= 100;
+  var bX=18,bY=18,bW=108,bH=158;
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.12)'; ctx.shadowBlur=10; ctx.shadowOffsetY=4;
+  rrect(ctx,bX,bY+28,bW,bH-28,5);
+  var bGr=ctx.createLinearGradient(bX,bY+28,bX+bW,bY+bH); bGr.addColorStop(0,'#e8eeff'); bGr.addColorStop(1,'#d0d8f5');
+  ctx.fillStyle=bGr; ctx.fill(); ctx.restore();
+  rrect(ctx,bX,bY+28,bW,bH-28,5); ctx.strokeStyle='#8899cc'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(bX-7,bY+30); ctx.lineTo(bX+bW/2,bY+5); ctx.lineTo(bX+bW+7,bY+30); ctx.closePath();
+  var rGr=ctx.createLinearGradient(bX,bY+5,bX,bY+32); rGr.addColorStop(0,'#b0c0f0'); rGr.addColorStop(1,'#98aae0');
+  ctx.fillStyle=rGr; ctx.fill(); ctx.strokeStyle='#7088cc'; ctx.lineWidth=2.5; ctx.stroke();
+  for (var c=0;c<3;c++) { var cx2=bX+14+c*(bW-28)/2-5; rrect(ctx,cx2,bY+32,10,bH-62,3); ctx.fillStyle='#c8d4f0'; ctx.fill(); ctx.strokeStyle='#9aacdc'; ctx.lineWidth=2; ctx.stroke(); rrect(ctx,cx2-3,bY+30,16,5,2); ctx.fillStyle='#b0c4e8'; ctx.fill(); }
+  for (var s2=0;s2<3;s2++) { rrect(ctx,bX-s2*5,bY+bH-s2*6,bW+s2*10,6,2); ctx.fillStyle='hsl(225,35%,'+(80-s2*5)+'%)'; ctx.fill(); ctx.strokeStyle='#a0b0d8'; ctx.lineWidth=1.5; ctx.stroke(); }
+  [[bX+14,bY+48],[bX+bW-34,bY+48],[bX+14,bY+78],[bX+bW-34,bY+78]].forEach(function(wp){
+    var wx=wp[0],wy=wp[1];
+    rrect(ctx,wx,wy,18,16,3); var wGr=ctx.createLinearGradient(wx,wy,wx+18,wy+16); wGr.addColorStop(0,'#aad4ff'); wGr.addColorStop(1,'#88b8f0');
+    ctx.fillStyle=wGr; ctx.fill(); ctx.strokeStyle='#6699cc'; ctx.lineWidth=2; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wx+3,wy+2); ctx.lineTo(wx+7,wy+2); ctx.lineTo(wx+3,wy+6); ctx.closePath(); ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fill();
+    ctx.strokeStyle='rgba(100,160,220,.35)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(wx+9,wy+1); ctx.lineTo(wx+9,wy+15); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wx+1,wy+8); ctx.lineTo(wx+17,wy+8); ctx.stroke();
+  });
+  rrect(ctx,bX+bW/2-11,bY+bH-36,22,25,3); ctx.fillStyle='#7080c0'; ctx.fill(); ctx.strokeStyle='#5060a8'; ctx.lineWidth=2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(bX+bW/2+5,bY+bH-23,2.5,0,Math.PI*2); ctx.fillStyle='#ffd700'; ctx.fill();
+  ctx.font='bold 12px "Segoe UI",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.strokeStyle='#8899cc'; ctx.lineWidth=3; ctx.strokeText('BANK',bX+bW/2,bY+17);
+  ctx.fillStyle='#3a4ea0'; ctx.fillText('BANK',bX+bW/2,bY+17);
+  var pX=bX+bW+2, pY2=bY+bH-52, tX=bX+bW+50, tY=10, tW=W-tX-14, tH=H-20;
+  ctx.beginPath(); ctx.moveTo(pX,pY2-5); ctx.lineTo(pX,pY2+5); ctx.lineTo(tX-2,tY+tH*0.4+5); ctx.lineTo(tX-2,tY+tH*0.4-5); ctx.closePath();
+  ctx.fillStyle='#b0c0e0'; ctx.fill();
+  ctx.strokeStyle='#8898c8'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(pX,pY2-5); ctx.lineTo(tX-2,tY+tH*0.4-5); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pX,pY2+5); ctx.lineTo(tX-2,tY+tH*0.4+5); ctx.stroke();
+  var nd=Date.now()/800;
+  for (var dr=0;dr<4;dr++) { var pr=(nd*0.4+dr*0.25)%1, px3=pX+pr*(tX-pX-2), py3=pY2+pr*(tY+tH*0.4-pY2); ctx.beginPath(); ctx.arc(px3,py3,3.5,0,Math.PI*2); ctx.fillStyle=ok?'rgba(14,158,107,.7)':'rgba(217,48,48,.65)'; ctx.fill(); ctx.strokeStyle=ok?'rgba(10,120,80,.8)':'rgba(180,30,30,.8)'; ctx.lineWidth=1.5; ctx.stroke(); }
+  rrect(ctx,tX,tY,tW,tH,10); ctx.fillStyle='#eef2fa'; ctx.fill(); ctx.strokeStyle='#a8b8dc'; ctx.lineWidth=2.5; ctx.stroke();
+  for (var v=0;v<=500;v+=100) { var gy=tY+tH-tH*(v/500); ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(140,160,200,.4)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(tX+2,gy); ctx.lineTo(tX+tW-2,gy); ctx.stroke(); ctx.setLineDash([]); if(v>0){ctx.fillStyle='rgba(80,100,160,.6)'; ctx.font='bold 9px Segoe UI'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(v+' Mio',tX+5,gy-7);} }
+  var reqY=tY+tH*(1-Math.min(d.out/500,0.97));
+  ctx.setLineDash([7,4]); ctx.strokeStyle='rgba(217,48,48,.8)'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(tX+2,reqY); ctx.lineTo(tX+tW-2,reqY); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#d93030'; ctx.font='bold 9px Segoe UI'; ctx.textAlign='right'; ctx.textBaseline='bottom';
+  ctx.fillText('Req. '+d.out+' Mio',tX+tW-4,reqY-2);
+  var hR=Math.min(d.h/500,0.98), wHh=tH*hR, wYy=tY+tH-wHh;
+  ctx.save(); rrect(ctx,tX+2,tY+2,tW-4,tH-4,8); ctx.clip();
+  var wG2=ctx.createLinearGradient(0,wYy,0,tY+tH);
+  if(ok){wG2.addColorStop(0,'rgba(14,158,107,.25)'); wG2.addColorStop(1,'rgba(14,158,107,.5)');}
+  else{wG2.addColorStop(0,'rgba(217,48,48,.2)'); wG2.addColorStop(1,'rgba(217,48,48,.42)');}
+  ctx.fillStyle=wG2; ctx.fillRect(tX+2,wYy,tW-4,wHh+(tY+tH)-wYy);
+  ctx.beginPath(); ctx.moveTo(tX+2,wYy+4);
+  for (var xx=tX+2;xx<=tX+tW-2;xx+=3){ var amp2=2+hR*4; ctx.lineTo(xx,wYy+Math.sin((xx-tX)*0.055+lcrWave)*amp2+Math.sin((xx-tX)*0.11-lcrWave*0.8)*amp2*0.5); }
+  ctx.lineTo(tX+tW-2,tY+tH-2); ctx.lineTo(tX+2,tY+tH-2); ctx.closePath();
+  ctx.fillStyle=ok?'rgba(14,158,107,.12)':'rgba(217,48,48,.1)'; ctx.fill();
+  if(hR>0.1){var bt=Date.now()/1200; for(var b2=0;b2<4;b2++){var bx2=tX+15+(b2*67)%(tW-30),bP=(bt+b2*0.7)%1,by2=tY+tH-4-bP*wHh*0.8; if(by2>wYy+5){ctx.beginPath();ctx.arc(bx2,by2,2.5+b2%2,0,Math.PI*2);ctx.fillStyle=ok?'rgba(14,158,107,.2)':'rgba(217,48,48,.2)';ctx.fill();}}}
+  ctx.restore();
+  if(wHh>34){var ly=Math.min(wYy+wHh/2,tY+tH-16); rrect(ctx,tX+tW/2-57,ly-11,114,22,8); ctx.fillStyle=ok?'rgba(14,158,107,.15)':'rgba(217,48,48,.12)'; ctx.fill(); ctx.strokeStyle=ok?'#0e9e6b':'#d93030'; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=ok?'#0a7a50':'#b02020'; ctx.font='bold 11px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('HQLA '+d.h+' Mio',tX+tW/2,ly);}
+  if(!ok&&wYy>reqY+12){var ax=tX+tW-14; ctx.strokeStyle='rgba(217,48,48,.8)'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(ax,reqY+4); ctx.lineTo(ax,wYy-4); ctx.stroke(); [[ax,reqY+4,-1],[ax,wYy-4,1]].forEach(function(pt){ctx.fillStyle='rgba(217,48,48,.8)';ctx.beginPath();ctx.moveTo(pt[0]-5,pt[1]+pt[2]*8);ctx.lineTo(pt[0],pt[1]+pt[2]*2);ctx.lineTo(pt[0]+5,pt[1]+pt[2]*8);ctx.closePath();ctx.fill();});}
+  var lN=d.lcr, bc=lN>=100?'#0e9e6b':lN>=85?'#c08000':'#d93030', bb=lN>=100?'rgba(14,158,107,.1)':lN>=85?'rgba(192,128,0,.08)':'rgba(217,48,48,.08)';
+  rrect(ctx,tX+tW/2-50,tY+5,100,26,8); ctx.fillStyle=bb; ctx.fill(); ctx.strokeStyle=bc; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=bc; ctx.font='bold 12px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('LCR: '+lN+'%',tX+tW/2,tY+18);
+  var face=lN>=100?'OK':lN>=85?'WARN':'LOW';
+  ctx.font='19px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  var faceEmoji = lN>=100?'\u{1F60A}':lN>=85?'\u{1F630}':'\u{1F631}';
+  ctx.fillText(faceEmoji, bX+bW/2, bY-6+Math.sin(lcrWave*1.8)*(lN<100?3:1));
 }
+function lcrAnimLoop(){drawLCRBank(); lcrRafId=requestAnimationFrame(lcrAnimLoop);}
+function startLCRAnim(){if(!lcrRafId){var c=document.getElementById('lcr-canvas'); if(c){c.width=c.offsetWidth||540;c.height=210;c._sz=true;} lcrAnimLoop();}}
+function stopLCRAnim(){if(lcrRafId){cancelAnimationFrame(lcrRafId);lcrRafId=null;}}
+setTimeout(function(){var c=document.getElementById('lcr-canvas'); if(c){c.width=c.offsetWidth||540;c.height=210;c._sz=true;} startLCRAnim();}, 80);
 
-function lcrAnimLoop(){drawCartoonLCRBank();lcrRafIdInner=requestAnimationFrame(lcrAnimLoop);}
+/* ══ STRESSTEST ══ */
+var bankWave=0, bankRafId=null, bankStress=0, bankStageVis=0, bankParticles=[];
+window._runStep = 0;
 
-function startLCRAnim(){if(!lcrRafIdInner){const c=document.getElementById('lcr-canvas');if(c){c.width=c.offsetWidth||540;c.height=210;c._sz=true;}lcrAnimLoop();}}
-
-function stopLCRAnim(){if(lcrRafIdInner){cancelAnimationFrame(lcrRafIdInner);lcrRafIdInner=null;}}
-
-setTimeout(()=>{const c=document.getElementById('lcr-canvas');if(c){c.width=c.offsetWidth||540;c.height=210;c._sz=true;}startLCRAnim();},80);
-
- 
-
-/* ════════ STRESSTEST ════════ */
-
-let bankWave=0,bankRafId=null,bankStress=0,bankStageVis=0,bankParticles=[];
-
- 
-
-/* ── EVENT MODELS (based on Fed SVB Report 2023, FSB, St.Louis Fed bank run research)
-
-   decayFloor(t, halfLife_hours, floor_pct)
-
-   floor = minimum % remaining (not everything leaves — insurance, friction, contracts)
-
-   halfLife = hours for remaining losable deposits to halve
-
-   SVB: institutional/VC lost ~25% day 1, expected ~62% day 2 → floor ~13%, half ~9h
-
-   Stable retail: FDIC insured floor high; even 2008 WaMu kept ~60%+ of retail
-
-────────────────────────────────────────────────── */
-
-const EVENT_MODELS={
-
-  trust:{
-
-    sFloor:88, bFloor:45, iFloor:10,
-
-    sHalf:72,  bHalf:16,  iHalf:8,
-
+var EVENT_MODELS = {
+  trust:{sFloor:88,bFloor:45,iFloor:10,sHalf:72,bHalf:16,iHalf:8,
     stages:['Normal','Erste Abflüsse','Starker Stress','Aufsichtskontakt','Schliessungsrisiko'],
-
-    stageThresholds:[0,5,15,30,50], // % total outflow to trigger each stage
-
-    desc:'<strong>Vertrauensschock (SVB-Typ)</strong>: Institutional flieht sofort (VC-Netzwerke, Social Media). Halbwertszeit ~8h. Retail Brokered folgt in ~16h. Stabile Retail bleibt zu ~88%. Entspricht SVB: 25% am Tag 1, erwartete 62% am Tag 2. Behörden schlossen SVB 44h nach erstem Abfluss.'
-
-  },
-
-  rate:{
-
-    sFloor:93, bFloor:35, iFloor:55,
-
-    sHalf:120, bHalf:10,  iHalf:32,
-
+    stageThresholds:[0,5,15,30,50],
+    desc:'<strong>Vertrauensschock (SVB-Typ)</strong>: Institutional flieht sofort via VC-Netzwerke und Social Media (Halbwertszeit ~8h). Retail Brokered folgt in ~16h. Stabile Retail bleibt zu ~88%. SVB: 25% Abfluss an Tag 1, weitere 62% am Tag 2 erwartet. Behörden schlossen SVB 44h nach erstem Abfluss.'},
+  rate:{sFloor:93,bFloor:35,iFloor:55,sHalf:120,bHalf:10,iHalf:32,
     stages:['Normal','Plattformwechsel','Brokered-Abfluss','Institutional zieht nach','Stabilisierung'],
-
     stageThresholds:[0,3,12,25,40],
-
-    desc:'<strong>Zinsanstieg-Panik</strong>: Rate-sensitive Retail Brokered (Fintech-Plattformen) wechselt in ~10h zu Hochzinsanbietern. Institutional teilweise durch Vertragsfristen gebunden (Floor ~55%). Stabile Retail bleibt fast vollständig. Geringerer Gesamtschaden, keine Bankschliessung bei gesundem HQLA-Puffer.'
-
-  },
-
-  credit:{
-
-    sFloor:82, bFloor:40, iFloor:12,
-
-    sHalf:48,  bHalf:18,  iHalf:9,
-
-    stages:['Normal','Rating-Warnung','Wholesale-Abfluss','Retail reagiert','Aufsichtsintervention'],
-
-    stageThresholds:[0,4,14,28,45],
-
-    desc:'<strong>Bonitätsverschlechterung / Downgrade</strong>: Institutionelle reagieren sofort auf Ratinganpassungen (interne Risikolimits, Collateral-Trigger). Retail Brokered folgt in ~18h. Stabile Retail verliert auch — Einlagensicherung bremst (Floor 82%). Mittlerer bis schwerer Schaden je nach Ausgangslage.'
-
-  },
-
-  sys:{
-
-    sFloor:68, bFloor:22, iFloor:5,
-
-    sHalf:28,  bHalf:8,   iHalf:5,
-
-    stages:['Normal','Systemalarm','Massiver Abfluss','Fast alle Typen betroffen','Existenzkrise'],
-
+    desc:'<strong>Zinsanstieg-Panik (Schwelle: +2–3% Leitzins in 12 Monaten, z.B. Fed 2022–23: +5.25%)</strong>: Rate-sensitive Retail Brokered auf Fintech-Plattformen wechselt in ~10h zu Hochzinsanbietern. Institutional durch Vertragsfristen gebunden (Floor ~55%). Stabile Retail bleibt fast vollständig. Bei gutem HQLA-Puffer keine Bankschliessung — Zinspanik-Abflüsse sind langsamer als Vertrauensschocks.'},
+  credit:{sFloor:98,bFloor:70,iFloor:50,sHalf:300,bHalf:60,iHalf:30,
+    stages:['Normal','Rating-Warnung','Wholesale-Abfluss','Anhaltende Abflüsse','SNB-Intervention'],
+    stageThresholds:[0,3,10,20,35],
+    desc:'<strong>Bonitätsverschlechterung / CS-Typ (langsam, über Wochen)</strong> — 1 Simulationsstunde = ca. 15 Realstunden: Institutional reagiert auf Ratingdruck langsam (HWZ ~30 Sim-h = ~3 Wochen real). WM/Brokered folgt noch langsamer (HWZ ~60h = ~6 Wochen real). Swiss Retail nahezu stabil (Floor 98%). Bei T+48h (ca. 30 Tage real) ~28% Abfluss — entspricht CS Q1 2023 CHF 67 Mrd. Total 6 Monate (Q4 2022 + Q1 2023): 55% von CHF 371 Mrd. Ausgangsbasis. Bank durch SNB ELA CHF 168 Mrd. gestützt.'},
+  sys:{sFloor:68,bFloor:22,iFloor:5,sHalf:28,bHalf:8,iHalf:5,
+    stages:['Normal','Systemalarm','Massiver Abfluss','Fast alle Typen','Existenzkrise'],
     stageThresholds:[0,8,20,38,55],
-
-    desc:'<strong>Systemkrise (2008-Typ)</strong>: Alle Einlagetypen unter Druck. Stabile Retail verliert auch (Floor 68% — Panik überwindet Einlagensicherung). Institutional fast vollständig weg in <12h. Retail Brokered ~78% Verlust. Selbst mit gutem HQLA-Puffer droht Schliessung. Entspricht Lehman-Wochenende.'
-
-  }
-
+    desc:'<strong>Systemkrise (2008-Typ, z.B. Lehman)</strong>: Alle Einlagetypen unter Druck — stabile Retail verliert auch (Floor 68%, Panik überwindet Einlagensicherung). Institutional fast vollständig weg in unter 12h. Retail Brokered ~78% Verlust. Selbst mit solidem HQLA-Puffer droht Schliessung.'}
 };
 
- 
+/* ── FALLSTUDIEN-PRESETS ───────────────────────────────────────────────────
+   SVB (Quellen: Fed Review April 2023, OIG Report Sept. 2023, Barr-Testimony):
+   - $175 Mrd. Einlagen, 94% unversichert/institutionell (VC, Startups)
+   - Tag 1 (9.3.23): $42 Mrd. (24%) abgeflossen; Tag 2 erwartet: $100 Mrd.
+   - Skaliert auf 900 Mio Basis: Retail 10 / Brokered 0 / Institutional 890
 
-function onEventTypeChange(){
+   Credit Suisse (Quellen: CS Q1 2023 Earnings, Yale JFC Vol.7, CEPR 2023):
+   - CHF 245 Mrd. Einlagen Ende 2022; gemischt: 25% CH-Retail, 35% WM, 40% Inst.
+   - Phase 1 (Q4 2022): CHF 138 Mrd. über ~12 Wochen (schleichend)
+   - Phase 2 (15.–19.3.23): ~CHF 10 Mrd./Tag Akutphase; SNB: CHF 168 Mrd. ELA
+   - Skaliert auf 1000 Mio Basis: Retail 250 / Brokered 350 / Institutional 400
+─────────────────────────────────────────────────────────────────────────── */
+var CASE_PRESETS = {
+  svb: {
+    type: 'trust', s: 10, b: 0, i: 890, spd: 60,
+    factbox: '<strong style="color:#d93030">SVB Silicon Valley Bank — März 2023</strong> · Quellen: Fed Review April 2023 · Barr-Testimony Senat März 2023 · FDIC OIG Sept. 2023<br><br>' +
+      '<strong>Einlagenstruktur (skaliert auf 900 Mio):</strong> Stabile Retail 10 Mio (1%) · Retail Brokered 0 · Institutional/VC 890 Mio (99%)<br>' +
+      '<strong>Real:</strong> $175,4 Mrd. total per 31.12.2022 · 94% unversichert (>$250k) · Fast ausschliesslich VC/Startups<br><br>' +
+      '<strong>Verifizierter Verlauf (Quelle: Barr-Testimony, Fed Report):</strong><br>' +
+      '&bull; <strong>9. März, Tag 1:</strong> $42 Mrd. abgeflossen = <strong>24%</strong> der Einlagen<br>' +
+      '&bull; <strong>10. März, erwartet:</strong> weitere $100 Mrd. = <strong>57%</strong> der Resteinlagen ($133 Mrd.)<br>' +
+      '&bull; <strong>Total erwartet 2 Tage:</strong> $142 Mrd. = <strong>81%</strong> der Gesamteinlagen (Barr: «81% of SVB deposits»)<br>' +
+      '&bull; <strong>Tatsächlich vollzogen:</strong> nur $42 Mrd. (24%) — Bank wurde am 10. März 09:00 Uhr geschlossen, bevor Tag 2 eintrat<br>' +
+      '&bull; <strong>Schliessungsgrund:</strong> Negatives Cash-Saldo von ~$958 Mio. am Abend des 9. März · SVB konnte «cash letter» bei der Fed nicht mehr decken<br><br>' +
+      '<strong>Simulator-Hinweis:</strong> T+48h zeigt ~81% Abfluss = hypothetisches Ende wenn Bank nicht geschlossen worden wäre. Historisch realisiert: nur 24% (Tag 1) bevor Schliessung alle weiteren Abflüsse stoppte.<br>' +
+      '<strong>Warum so schnell?</strong> 94% institutionell/VC — VC-Netzwerke und WhatsApp-Gruppen koordinierten Abzug innerhalb von Stunden. Kein versichertes Retail als Anker.'
+  },
+  cs: {
+    type: 'credit', s: 250, b: 350, i: 400, spd: 700,
+    factbox: '<strong style="color:#3d5fe0">Credit Suisse — 2022/2023</strong> · Quellen: CS Q4 2022 Earnings · CS Q1 2023 Earnings · CEPR VoxEU Mai 2023<br><br>' +
+      '<strong>Einlagenstruktur (skaliert auf 1000 Mio):</strong> Swiss Retail 250 Mio (25%) · Wealth Mgmt/Brokered 350 Mio (35%) · Institutional/Wholesale 400 Mio (40%)<br><br>' +
+      '<strong>Verifizierte Depositenentwicklung:</strong><br>' +
+      '&bull; Anfang Q4 2022: <strong>CHF 371 Mrd.</strong> (Ausgangsbasis)<br>' +
+      '&bull; Ende Q4 2022: <strong>CHF 233 Mrd.</strong> → Abfluss CHF 138 Mrd. = <strong>37%</strong> in ~12 Wochen<br>' +
+      '&bull; Ende Q1 2023: <strong>CHF 166 Mrd.</strong> → weiterer Abfluss CHF 67 Mrd. = <strong>29%</strong> der Resteinlagen<br>' +
+      '&bull; Gesamt: CHF 205 Mrd. / CHF 371 Mrd. = <strong>55%</strong> über 6 Monate (verifiziert)<br><br>' +
+      '<strong style="color:#e06b1a">⏱ Zeitmassstab Simulator: 1 Sim-Stunde ≈ 90 Realstunden (~3.75 Tage)</strong><br>' +
+      'T+48h im Simulator = ~180 Realstunden = ca. 7.5 Realtage (Akutphase März 2023)<br><br>' +
+      '<strong>Akutphase 15.–19. März 2023:</strong> Saudi National Bank sagte «absolutely not» auf weitere Kapitalerhöhung. Zusammen mit SVB-Schock: massiver Abfluss in wenigen Tagen. SNB stützte mit CHF 168 Mrd. ELA — grösste Einzelbank-Nothilfe aller Zeiten.<br><br>' +
+      '<strong>Swiss Retail (25%): nur 1% Abfluss in Q1 2023</strong> — Einlagensicherung CHF 100k und Beziehungsbanking wirkten als Anker. Gegensatz zu SVB: 94% unversichert, 0% stabiles Retail.'
+  },
+  custom: { factbox: null }
+};
 
-  const type=document.getElementById('cfg-type').value;
+function loadCase(key) {
+  var p = CASE_PRESETS[key];
+  if (!p) return;
+  if (p.type) document.getElementById('cfg-type').value = p.type;
+  if (p.s !== undefined) document.getElementById('cfg-s').value = p.s;
+  if (p.b !== undefined) document.getElementById('cfg-b').value = p.b;
+  if (p.i !== undefined) document.getElementById('cfg-i').value = p.i;
+  if (p.spd !== undefined) document.getElementById('cfg-spd').value = p.spd;
+  var fb = document.getElementById('case-factbox');
+  if (p.factbox) { fb.innerHTML = p.factbox; fb.style.display = 'block'; }
+  else { fb.innerHTML = '<span style="color:var(--muted)">Eigene Eingabe: Einlagen und Ereignistyp frei konfigurierbar.</span>'; fb.style.display = 'block'; }
+  resetRun();
+  onEventTypeChange();
+}
 
-  const m=EVENT_MODELS[type];
+function decayFloor(t, half, floor) {
+  return floor + (100-floor) * Math.exp(-Math.LN2/half*t);
+}
 
-  document.getElementById('event-desc').innerHTML=m.desc;
+function onEventTypeChange() {
+  var type = document.getElementById('cfg-type').value;
+  var m = EVENT_MODELS[type];
+  document.getElementById('event-desc').innerHTML = m.desc;
+  m.stages.forEach(function(label, i) { var p=document.getElementById('stg'+i); if(p) p.textContent=label; });
+  drawFullCurves();
+  _applyTime(window._runStep || 0);
+}
 
-  // Update stage pills with event-specific labels
+/* ── Chart (lazy init when tab becomes visible) ── */
+var runLabels = [];
+for (var ri=0; ri<49; ri++) { runLabels.push(ri%6===0 ? 'T+'+ri+'h' : ''); }
 
-  m.stages.forEach((label,i)=>{
-
-    const p=document.getElementById('stg'+i);
-
-    if(p) p.textContent=label;
-
+function initRunChart() {
+  if (runChartReady) return;
+  var canvas = document.getElementById('c5');
+  if (!canvas) return;
+  runChart = new Chart(canvas, {
+    type: 'line',
+    data: {labels: runLabels, datasets: [
+      {label:'Stabile Retail',         data:new Array(49).fill(null), borderColor:'#0e9e6b', backgroundColor:'rgba(14,158,107,.07)', tension:0.4, fill:true, pointRadius:0, borderWidth:2.5},
+      {label:'Retail Brokered',        data:new Array(49).fill(null), borderColor:'#3d5fe0', backgroundColor:'rgba(61,95,224,.06)',  tension:0.4, fill:true, pointRadius:0, borderWidth:2.5},
+      {label:'Institutional Brokered', data:new Array(49).fill(null), borderColor:'#d93030', backgroundColor:'rgba(217,48,48,.06)', tension:0.4, fill:true, pointRadius:0, borderWidth:2.5}
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#5a6380',font:{size:10}}}},
+      scales:{
+        x:{grid:{color:'rgba(0,0,0,.06)'}, ticks:{color:'#5a6380',maxTicksLimit:9}},
+        y:{grid:{color:'rgba(0,0,0,.06)'}, ticks:{color:'#5a6380',callback:function(v){return v+'%'}}, min:0, max:105}
+      },
+      animation:{duration:0}
+    }
   });
-
-  drawFullCurves();
-
-  if(window._runStep!==undefined) _applyTime(window._runStep||0);
-
+  runChartReady = true;
 }
 
-onEventTypeChange();
-
- 
-
-function decayFloor(t,half,floor){return floor+(100-floor)*Math.exp(-Math.LN2/half*t);}
-
- 
-
-/* ── CHART ── */
-
-const runLabels=Array.from({length:49},(_,i)=>i%6===0?`T+${i}h`:'');
-
-const runChart=new Chart(document.getElementById('c5'),{
-
-  type:'line',
-
-  data:{labels:runLabels,datasets:[
-
-    {label:'Stabile Retail',data:Array(49).fill(null),borderColor:'#0e9e6b',backgroundColor:'rgba(14,158,107,.07)',tension:.4,fill:true,pointRadius:0,borderWidth:2.5},
-
-    {label:'Retail Brokered',data:Array(49).fill(null),borderColor:'#3d5fe0',backgroundColor:'rgba(61,95,224,.06)',tension:.4,fill:true,pointRadius:0,borderWidth:2.5},
-
-    {label:'Institutional Brokered',data:Array(49).fill(null),borderColor:'#d93030',backgroundColor:'rgba(217,48,48,.06)',tension:.4,fill:true,pointRadius:0,borderWidth:2.5}
-
-  ]},
-
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#5a6380',font:{size:10}}}},scales:{x:{grid:{color:'rgba(0,0,0,.06)'},ticks:{color:'#5a6380',maxTicksLimit:9}},y:{grid:{color:'rgba(0,0,0,.06)'},ticks:{color:'#5a6380',callback:v=>v+'%'},min:0,max:105}},animation:{duration:0}}
-
-});
-
-function drawFullCurves(){
-
-  const type=document.getElementById('cfg-type').value,m=EVENT_MODELS[type];
-
-  for(let h=0;h<49;h++){runChart.data.datasets[0].data[h]=parseFloat(decayFloor(h,m.sHalf,m.sFloor).toFixed(1));runChart.data.datasets[1].data[h]=parseFloat(decayFloor(h,m.bHalf,m.bFloor).toFixed(1));runChart.data.datasets[2].data[h]=parseFloat(decayFloor(h,m.iHalf,m.iFloor).toFixed(1));}
-
+function drawFullCurves() {
+  if (!runChart) return;
+  var type = document.getElementById('cfg-type').value, m = EVENT_MODELS[type];
+  for (var h=0; h<49; h++) {
+    runChart.data.datasets[0].data[h] = parseFloat(decayFloor(h,m.sHalf,m.sFloor).toFixed(1));
+    runChart.data.datasets[1].data[h] = parseFloat(decayFloor(h,m.bHalf,m.bFloor).toFixed(1));
+    runChart.data.datasets[2].data[h] = parseFloat(decayFloor(h,m.iHalf,m.iFloor).toFixed(1));
+  }
   runChart.update('none');
-
 }
 
-drawFullCurves();
-
- 
-
-/* ── STATUS ALERT (based on actual outflow %, not fixed time) ── */
-
-function updateStatusAlert(outPct,type){
-
-  const m=EVENT_MODELS[type];
-
-  const thresholds=m.stageThresholds; // [0,x,x,x,x]
-
-  const stages=m.stages;
-
-  let level=0;
-
-  for(let i=thresholds.length-1;i>=0;i--){if(outPct>=thresholds[i]){level=i;break;}}
-
-  const el=document.getElementById('status-alert');
-
-  const icon=document.getElementById('status-icon');
-
-  const title=document.getElementById('status-title');
-
-  const desc=document.getElementById('status-desc');
-
-  const descs=[
-
-    `Kein signifikanter Abfluss. Bank operiert normal.`,
-
-    `Erste Abflüsse messbar. Aufsichts-Monitoring beginnt (SREP).`,
-
-    `Signifikante Abflüsse — HQLA-Puffer wird beansprucht. Aufsicht auf Hochalert.`,
-
-    `Schwere Liquiditätskrise. BRRD «Early Intervention» möglich. Notfallplan aktiviert.`,
-
-    `Existenzielle Krise — «Failing or Likely to Fail» (BRRD Art. 32). Aufsicht kann Bank schliessen.`
-
+/* ── Status alert ── */
+function updateStatusAlert(outPct, type) {
+  var m = EVENT_MODELS[type];
+  var thr = m.stageThresholds;
+  var level = 0;
+  for (var i=thr.length-1; i>=0; i--) { if (outPct >= thr[i]) { level=i; break; } }
+  var el=document.getElementById('status-alert'), icon=document.getElementById('status-icon');
+  var title=document.getElementById('status-title'), desc=document.getElementById('status-desc');
+  var descs=[
+    'Kein signifikanter Abfluss. Bank operiert normal.',
+    'Erste Abflüsse messbar. Aufsichts-Monitoring beginnt (SREP).',
+    'Signifikante Abflüsse — HQLA-Puffer wird beansprucht. Aufsicht auf Hochalert.',
+    'Schwere Liquiditätskrise. BRRD «Early Intervention» möglich. Notfallplan aktiviert.',
+    'Existenzielle Krise — «Failing or Likely to Fail» (BRRD Art. 32). Behörden können Bank schliessen.'
   ];
-
-  const classes=['ok','watch','stress','critical','critical'];
-
-  const icons=['✅','👁️','⚠️','🆘','☠️'];
-
-  el.className='status-alert '+classes[level];
-
-  icon.textContent=icons[level];
-
-  title.textContent=`${stages[level]} (${outPct.toFixed(1)}% Abfluss)`;
-
-  desc.textContent=descs[level];
-
-  // Stage pills
-
-  document.querySelectorAll('.stage-pill').forEach(p=>p.classList.toggle('active',parseInt(p.dataset.stg)===level));
-
+  var classes=['ok','watch','stress','critical','critical'];
+  var icons=['✅','👁','⚠️','🆘','☠'];
+  el.className = 'status-alert '+classes[level];
+  icon.textContent = icons[level];
+  title.textContent = m.stages[level]+' ('+outPct.toFixed(1)+'% Abfluss)';
+  desc.textContent = descs[level];
+  document.querySelectorAll('.stage-pill').forEach(function(p){ p.classList.toggle('active', parseInt(p.dataset.stg)===level); });
   return level;
-
 }
 
- 
+/* ── Run state ── */
+var isRun=false, runRafId=null, runLastTs=null;
 
-/* ── RUN STATE (rAF, smooth) ── */
-
-let isRun=false,runRafId=null,runLastTs=null;
-
-window._runStep=0;
-
-function jumpToTime(t){
-
-  t=Math.min(Math.max(+t,0),48);
-
-  if(isRun){cancelAnimationFrame(runRafId);runRafId=null;isRun=false;document.getElementById('run-btn').textContent='▶ Fortsetzen';document.getElementById('run-btn').className='btn';}
-
-  window._runStep=t;_applyTime(t);
-
+function jumpToTime(t) {
+  t = Math.min(Math.max(+t, 0), 48);
+  if (isRun) { cancelAnimationFrame(runRafId); runRafId=null; isRun=false; runLastTs=null; document.getElementById('run-btn').textContent='▶ Fortsetzen'; document.getElementById('run-btn').className='btn'; }
+  window._runStep = t;
+  _applyTime(t);
 }
 
-function _applyTime(t){
-
-  const type=document.getElementById('cfg-type').value,m=EVENT_MODELS[type];
-
-  const S0=parseFloat(document.getElementById('cfg-s').value)||400;
-
-  const B0=parseFloat(document.getElementById('cfg-b').value)||300;
-
-  const I0=parseFloat(document.getElementById('cfg-i').value)||200;
-
-  const TOT=S0+B0+I0;
-
-  const sv=decayFloor(t,m.sHalf,m.sFloor),bv=decayFloor(t,m.bHalf,m.bFloor),iv=decayFloor(t,m.iHalf,m.iFloor);
-
-  const outMio=Math.round(TOT-S0*sv/100-B0*bv/100-I0*iv/100);
-
-  const outPct=parseFloat(((outMio/TOT)*100).toFixed(1));
-
-  document.getElementById('ss-pct').textContent=sv.toFixed(1)+'%';document.getElementById('ss-bar').style.width=sv.toFixed(1)+'%';document.getElementById('ss-mio').textContent=(S0*sv/100).toFixed(0)+' Mio EUR verbleibend';
-
-  document.getElementById('sb-pct').textContent=bv.toFixed(1)+'%';document.getElementById('sb-bar').style.width=bv.toFixed(1)+'%';document.getElementById('sb-mio').textContent=(B0*bv/100).toFixed(0)+' Mio EUR verbleibend';
-
-  document.getElementById('si-pct').textContent=iv.toFixed(1)+'%';document.getElementById('si-bar').style.width=iv.toFixed(1)+'%';document.getElementById('si-mio').textContent=(I0*iv/100).toFixed(0)+' Mio EUR verbleibend';
-
+function _applyTime(t) {
+  var type=document.getElementById('cfg-type').value, m=EVENT_MODELS[type];
+  var S0=parseFloat(document.getElementById('cfg-s').value)||400;
+  var B0=parseFloat(document.getElementById('cfg-b').value)||300;
+  var I0=parseFloat(document.getElementById('cfg-i').value)||200;
+  var TOT = S0+B0+I0;
+  var sv=decayFloor(t,m.sHalf,m.sFloor), bv=decayFloor(t,m.bHalf,m.bFloor), iv=decayFloor(t,m.iHalf,m.iFloor);
+  var outMio=Math.round(TOT - S0*sv/100 - B0*bv/100 - I0*iv/100);
+  var outPct=parseFloat(((outMio/TOT)*100).toFixed(1));
+  document.getElementById('ss-pct').textContent=sv.toFixed(1)+'%'; document.getElementById('ss-bar').style.width=sv.toFixed(1)+'%'; document.getElementById('ss-mio').textContent=Math.round(S0*sv/100)+' Mio EUR verbleibend';
+  document.getElementById('sb-pct').textContent=bv.toFixed(1)+'%'; document.getElementById('sb-bar').style.width=bv.toFixed(1)+'%'; document.getElementById('sb-mio').textContent=Math.round(B0*bv/100)+' Mio EUR verbleibend';
+  document.getElementById('si-pct').textContent=iv.toFixed(1)+'%'; document.getElementById('si-bar').style.width=iv.toFixed(1)+'%'; document.getElementById('si-mio').textContent=Math.round(I0*iv/100)+' Mio EUR verbleibend';
   document.getElementById('tot-out-mio').textContent=outMio+' Mio EUR';
-
   document.getElementById('tot-out-pct').textContent=outPct+'% des Gesamtportfolios';
-
-  document.getElementById('run-time-disp').textContent=`T+${Math.floor(t)}h ${Math.round((t%1)*60).toString().padStart(2,'0')}min`;
-
+  var hh=Math.floor(t), mm=Math.round((t%1)*60);
+  document.getElementById('run-time-disp').textContent='T+'+hh+'h '+(mm<10?'0':'')+mm+'min';
   document.getElementById('run-time-slider').value=Math.floor(t);
-
-  const stgLevel=updateStatusAlert(outPct,type);
-
-  setBankState(outPct/100,stgLevel);
-
+  var lvl=updateStatusAlert(outPct, type);
+  setBankState(outPct/100, lvl);
 }
 
-function runFrame(ts){
-
-  if(!isRun)return;
-
-  if(runLastTs===null)runLastTs=ts;
-
-  const elapsed=ts-runLastTs,stepMs=parseInt(document.getElementById('cfg-spd').value)||300;
-
-  window._runStep+=elapsed/stepMs;runLastTs=ts;
-
-  if(window._runStep>=48){window._runStep=48;_applyTime(48);isRun=false;runRafId=null;document.getElementById('run-btn').textContent='✓ Fertig';document.getElementById('run-btn').className='btn';return;}
-
-  _applyTime(window._runStep);runRafId=requestAnimationFrame(runFrame);
-
+function runFrame(ts) {
+  if (!isRun) return;
+  if (runLastTs === null) runLastTs = ts;
+  var elapsed = ts - runLastTs;
+  var stepMs = parseInt(document.getElementById('cfg-spd').value) || 300;
+  window._runStep += elapsed / stepMs;
+  runLastTs = ts;
+  if (window._runStep >= 48) {
+    window._runStep = 48; _applyTime(48);
+    isRun=false; runRafId=null;
+    document.getElementById('run-btn').textContent='✓ Fertig';
+    document.getElementById('run-btn').className='btn';
+    return;
+  }
+  _applyTime(window._runStep);
+  runRafId = requestAnimationFrame(runFrame);
 }
 
-function toggleRun(){
-
-  if(isRun){cancelAnimationFrame(runRafId);runRafId=null;isRun=false;runLastTs=null;document.getElementById('run-btn').textContent='▶ Fortsetzen';document.getElementById('run-btn').className='btn';}
-
-  else{if(window._runStep>=48){window._runStep=0;_applyTime(0);}isRun=true;runLastTs=null;document.getElementById('run-btn').textContent='⏸ Pause';document.getElementById('run-btn').className='btn btn-warn';runRafId=requestAnimationFrame(runFrame);}
-
+function toggleRun() {
+  if (isRun) {
+    cancelAnimationFrame(runRafId); runRafId=null; isRun=false; runLastTs=null;
+    document.getElementById('run-btn').textContent='▶ Fortsetzen';
+    document.getElementById('run-btn').className='btn';
+  } else {
+    if (window._runStep >= 48) { window._runStep=0; _applyTime(0); }
+    isRun=true; runLastTs=null;
+    document.getElementById('run-btn').textContent='⏸ Pause';
+    document.getElementById('run-btn').className='btn btn-warn';
+    runRafId = requestAnimationFrame(runFrame);
+  }
 }
 
-function resetRun(){
-
-  if(isRun){cancelAnimationFrame(runRafId);runRafId=null;isRun=false;}
-
-  window._runStep=0;runLastTs=null;bankParticles=[];
-
-  document.getElementById('run-btn').textContent='▶ Simulation starten';document.getElementById('run-btn').className='btn';
-
-  const S0=parseFloat(document.getElementById('cfg-s').value)||400,B0=parseFloat(document.getElementById('cfg-b').value)||300,I0=parseFloat(document.getElementById('cfg-i').value)||200;
-
-  ['ss-pct','sb-pct','si-pct'].forEach(id=>document.getElementById(id).textContent='100.0%');['ss-bar','sb-bar','si-bar'].forEach(id=>document.getElementById(id).style.width='100%');
-
-  document.getElementById('ss-mio').textContent=S0+' Mio EUR verbleibend';document.getElementById('sb-mio').textContent=B0+' Mio EUR verbleibend';document.getElementById('si-mio').textContent=I0+' Mio EUR verbleibend';
-
-  document.getElementById('tot-out-mio').textContent='0 Mio EUR';document.getElementById('tot-out-pct').textContent='0% des Gesamtportfolios';
-
-  document.getElementById('run-time-disp').textContent='T+0h';document.getElementById('run-time-slider').value=0;
-
-  updateStatusAlert(0,document.getElementById('cfg-type').value);setBankState(0,0);
-
-  drawFullCurves();
-
+function resetRun() {
+  if (isRun) { cancelAnimationFrame(runRafId); runRafId=null; isRun=false; }
+  window._runStep=0; runLastTs=null; bankParticles=[];
+  document.getElementById('run-btn').textContent='▶ Simulation starten';
+  document.getElementById('run-btn').className='btn';
+  var S0=parseFloat(document.getElementById('cfg-s').value)||400;
+  var B0=parseFloat(document.getElementById('cfg-b').value)||300;
+  var I0=parseFloat(document.getElementById('cfg-i').value)||200;
+  ['ss-pct','sb-pct','si-pct'].forEach(function(id){document.getElementById(id).textContent='100.0%';});
+  ['ss-bar','sb-bar','si-bar'].forEach(function(id){document.getElementById(id).style.width='100%';});
+  document.getElementById('ss-mio').textContent=S0+' Mio EUR verbleibend';
+  document.getElementById('sb-mio').textContent=B0+' Mio EUR verbleibend';
+  document.getElementById('si-mio').textContent=I0+' Mio EUR verbleibend';
+  document.getElementById('tot-out-mio').textContent='0 Mio EUR';
+  document.getElementById('tot-out-pct').textContent='0% des Gesamtportfolios';
+  document.getElementById('run-time-disp').textContent='T+0h';
+  document.getElementById('run-time-slider').value=0;
+  updateStatusAlert(0, document.getElementById('cfg-type').value);
+  setBankState(0, 0);
+  if (runChartReady) drawFullCurves();
 }
 
- 
-
-/* ════════ CARTOON BANK ANIMATION ════════ */
-
-class EuroNote{constructor(bX,bY2){this.x=bX+(Math.random()-.5)*70;this.y=bY2-Math.random()*30;this.vx=(Math.random()-.4)*3.5+(Math.random()>.5?2.8:-2.8);this.vy=-Math.random()*4-.5;this.angle=(Math.random()-.5)*.7;this.spin=(Math.random()-.5)*.1;this.life=1;this.decay=.008+Math.random()*.007;this.w=18+Math.random()*8;}update(){this.x+=this.vx;this.y+=this.vy;this.vy+=.045;this.vx*=.984;this.angle+=this.spin;this.life-=this.decay;return this.life>0;}draw(ctx){if(this.life<=0)return;ctx.save();ctx.globalAlpha=Math.max(0,this.life);ctx.translate(this.x,this.y);ctx.rotate(this.angle);const h=this.w*.5;rrect(ctx,-this.w/2,-h/2,this.w,h,3);ctx.fillStyle='#22c55e';ctx.fill();ctx.strokeStyle='#15803d';ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.ellipse(0,0,this.w*.3,h*.3,0,0,Math.PI*2);ctx.fillStyle='#4ade80';ctx.fill();ctx.fillStyle='#14532d';ctx.font=`bold ${Math.round(h*.8)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('€',0,0);ctx.restore();}}
-
-function drawCloud(ctx,x,y,size,color){ctx.fillStyle=color;[[0,0,size*.5],[size*.45,-size*.15,size*.38],[size*.9,size*.05,size*.4],[size*1.35,0,size*.35],[-size*.35,size*.1,size*.3]].forEach(([cx,cy,cr])=>{ctx.beginPath();ctx.arc(x+cx,y+cy,cr,0,Math.PI*2);ctx.fill();});}
-
-function drawCartoonBank(){
-
-  const cvs=document.getElementById('bank-canvas');if(!cvs)return;
-
-  const ctx=cvs.getContext('2d'),W=cvs.width,H=cvs.height;
-
-  bankWave+=.045;const s2=bankStress,stg=bankStageVis;ctx.clearRect(0,0,W,H);
-
-  const skyPal=[['#b8d8f8','#ddeeff'],['#c0c8f0','#dde0ff'],['#d8c0e8','#f0d8f8'],['#f0b8a8','#fdd8c8'],['#e89090','#fcc0b0']];
-
-  const sp=skyPal[Math.min(stg,4)];const skyG2=ctx.createLinearGradient(0,0,0,H*.65);skyG2.addColorStop(0,sp[0]);skyG2.addColorStop(1,sp[1]);ctx.fillStyle=skyG2;ctx.fillRect(0,0,W,H);
-
-  if(stg<=1){for(let ci=0;ci<3;ci++){const cx=(ci*W*.35+W*.08+bankWave*6)%(W+80)-40;drawCloud(ctx,cx,H*.08+ci*H*.04,40+ci*15,'rgba(255,255,255,.7)');}}
-
-  else{const ca=Math.min(.65,(stg-1.5)*.32);for(let ci=0;ci<3;ci++){const cx=(ci*W*.35+W*.08+bankWave*8)%(W+80)-40;drawCloud(ctx,cx,H*.06+ci*H*.04,50+ci*18,stg>=3?`rgba(160,80,80,${ca})`:`rgba(120,80,160,${ca})`);}}
-
-  const gY=H*.7;const gG=ctx.createLinearGradient(0,gY,0,H);gG.addColorStop(0,'#6ab06a');gG.addColorStop(1,'#4a8a4a');ctx.fillStyle=gG;ctx.fillRect(0,gY,W,H-gY);ctx.strokeStyle='#5a9a5a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,gY);ctx.lineTo(W,gY);ctx.stroke();for(let g=0;g<8;g++){const gx=g*(W/8)+12;ctx.strokeStyle='#3a7a3a';ctx.lineWidth=2;for(let t2=0;t2<3;t2++){ctx.beginPath();ctx.moveTo(gx+t2*8,gY);ctx.quadraticCurveTo(gx+t2*8-3,gY-7,gx+t2*8+3,gY-9);ctx.stroke();}}
-
-  const waterH2=s2*H*.85,waterY2=H-waterH2;
-
-  if(waterH2>2){const al=Math.min(.85,.3+s2*.58);const wG3=ctx.createLinearGradient(0,waterY2,0,H);wG3.addColorStop(0,`rgba(60,120,200,${al*.7})`);wG3.addColorStop(1,`rgba(30,70,150,${al})`);ctx.fillStyle=wG3;ctx.fillRect(0,waterY2,W,waterH2);ctx.beginPath();ctx.moveTo(0,waterY2);for(let x=0;x<=W;x+=3){const amp=3+s2*7;ctx.lineTo(x,waterY2+Math.sin(x*.042+bankWave)*amp+Math.sin(x*.078-bankWave*.65)*amp*.5);}ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();const wF=ctx.createLinearGradient(0,waterY2,0,H);wF.addColorStop(0,`rgba(80,160,255,${al*.75})`);wF.addColorStop(1,`rgba(20,80,180,${al})`);ctx.fillStyle=wF;ctx.fill();ctx.beginPath();ctx.moveTo(0,waterY2);for(let x=0;x<=W;x+=3)ctx.lineTo(x,waterY2+Math.sin(x*.042+bankWave)*(3+s2*7));ctx.strokeStyle=`rgba(180,220,255,${.3+s2*.3})`;ctx.lineWidth=2;ctx.stroke();}
-
-  const tilt=s2>0.5?(s2-0.5)*0.28:0,sinkY=s2*H*.52,bW2=138,bH2=98;
-
-  ctx.save();ctx.translate(W/2,gY+sinkY);ctx.rotate(tilt);ctx.save();ctx.shadowColor='rgba(0,0,0,.18)';ctx.shadowBlur=14;ctx.shadowOffsetY=5;
-
-  for(let st=0;st<3;st++){rrect(ctx,-bW2/2-st*8+2,bH2-st*7,bW2+st*16-4,8,3);ctx.fillStyle=stg>=3?`hsl(0,25%,${68-st*4}%)`:`hsl(225,35%,${78-st*4}%)`;ctx.fill();ctx.strokeStyle=stg>=3?'#ccaaaa':'#a0b2dc';ctx.lineWidth=2;ctx.stroke();}
-
-  rrect(ctx,-bW2/2,-bH2,bW2,bH2+22,6);const bG2=ctx.createLinearGradient(-bW2/2,-bH2,bW2/2,bH2);if(stg>=3){bG2.addColorStop(0,'#f0d8d8');bG2.addColorStop(1,'#e0c0c0');}else{bG2.addColorStop(0,'#dde8ff');bG2.addColorStop(1,'#c8d6f5');}ctx.fillStyle=bG2;ctx.fill();ctx.restore();ctx.strokeStyle=stg>=3?'#cc8888':'#8899cc';ctx.lineWidth=3;ctx.stroke();
-
-  for(let c=0;c<5;c++){const cx=-bW2/2+14+c*(bW2-28)/4-5;rrect(ctx,cx,-bH2+12,10,bH2-30,3);ctx.fillStyle=stg>=3?'#e8c8c8':'#c8d8f0';ctx.fill();ctx.strokeStyle=stg>=3?'#cc8888':'#9aaae0';ctx.lineWidth=2;ctx.stroke();rrect(ctx,cx-3,-bH2+10,16,5,2);ctx.fillStyle=stg>=3?'#d8b0b0':'#b8ccec';ctx.fill();}
-
-  ctx.beginPath();ctx.moveTo(-bW2/2-8,-bH2+2);ctx.lineTo(0,-bH2-26);ctx.lineTo(bW2/2+8,-bH2+2);ctx.closePath();ctx.fillStyle=stg>=3?'#e8c0c0':'#bccce8';ctx.fill();ctx.strokeStyle=stg>=3?'#bb7777':'#7088cc';ctx.lineWidth=3;ctx.stroke();
-
-  const winC=stg>=3?'rgba(255,160,120,.8)':'rgba(180,220,255,.85)',winBC=stg>=3?'#cc6666':'#6699cc';
-
-  [[-45,-bH2+22],[-15,-bH2+22],[15,-bH2+22],[45,-bH2+22],[-45,-bH2+50],[-15,-bH2+50],[15,-bH2+50],[45,-bH2+50]].forEach(([wx,wy])=>{rrect(ctx,wx-8,wy,16,14,3);ctx.fillStyle=winC;ctx.fill();ctx.strokeStyle=winBC;ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.moveTo(wx-6,wy+2);ctx.lineTo(wx-2,wy+2);ctx.lineTo(wx-5,wy+5);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();});
-
-  rrect(ctx,-11,bH2-36,22,27,4);ctx.fillStyle=stg>=3?'#c08080':'#8090c8';ctx.fill();ctx.strokeStyle=stg>=3?'#aa5555':'#5060a8';ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.arc(7,bH2-22,2.5,0,Math.PI*2);ctx.fillStyle='#ffd700';ctx.fill();
-
-  if(s2>0.45){const ca2=Math.min(1,(s2-0.45)*2);ctx.strokeStyle=`rgba(160,60,60,${ca2*.7})`;ctx.lineWidth=2;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(-25,-bH2+35);ctx.lineTo(-14,-bH2+52);ctx.lineTo(-22,-bH2+64);ctx.stroke();ctx.beginPath();ctx.moveTo(28,-bH2+44);ctx.lineTo(18,-bH2+58);ctx.lineTo(25,-bH2+72);ctx.stroke();}
-
-  ctx.font='bold 13px "Segoe UI",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=4;ctx.strokeText('BANK',0,-bH2+9);ctx.fillStyle=stg>=3?'#a03030':'#3a4ea0';ctx.fillText('BANK',0,-bH2+9);
-
+/* ══ CARTOON BANK ANIMATION ══ */
+function EuroNote(bXp, bYp) {
+  this.x=bXp+(Math.random()-0.5)*70; this.y=bYp-Math.random()*30;
+  this.vx=(Math.random()-0.4)*3.5+(Math.random()>0.5?2.8:-2.8);
+  this.vy=-Math.random()*4-0.5; this.angle=(Math.random()-0.5)*0.7;
+  this.spin=(Math.random()-0.5)*0.1; this.life=1;
+  this.decay=0.008+Math.random()*0.007; this.w=18+Math.random()*8;
+}
+EuroNote.prototype.update = function() {
+  this.x+=this.vx; this.y+=this.vy; this.vy+=0.045; this.vx*=0.984;
+  this.angle+=this.spin; this.life-=this.decay; return this.life>0;
+};
+EuroNote.prototype.draw = function(ctx) {
+  if(this.life<=0) return; ctx.save(); ctx.globalAlpha=Math.max(0,this.life);
+  ctx.translate(this.x,this.y); ctx.rotate(this.angle);
+  var h=this.w*0.5; rrect(ctx,-this.w/2,-h/2,this.w,h,3);
+  ctx.fillStyle='#22c55e'; ctx.fill(); ctx.strokeStyle='#15803d'; ctx.lineWidth=2; ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(0,0,this.w*0.3,h*0.3,0,0,Math.PI*2); ctx.fillStyle='#4ade80'; ctx.fill();
+  ctx.fillStyle='#14532d'; ctx.font='bold '+Math.round(h*0.8)+'px sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('\u20AC',0,0);
   ctx.restore();
+};
 
-  const stgEmotes=['','😟','😰','😱','💀'];if(stg>=1){ctx.font='26px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(stgEmotes[Math.min(stg,4)],W/2,gY+sinkY-bH2-42+Math.sin(bankWave*1.5)*5);}
-
-  const type2=document.getElementById('cfg-type').value,m2=EVENT_MODELS[type2];
-
-  const sN=m2.stages,sC=['#3d5fe0','#7c5cdb','#c08000','#e06b1a','#d93030'],sEmoji=['✅','👁️','⚠️','🆘','☠️'],si=Math.min(stg,4);
-
-  rrect(ctx,W-172,7,166,28,8);ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();ctx.strokeStyle=sC[si];ctx.lineWidth=2;ctx.stroke();ctx.fillStyle=sC[si];ctx.font='bold 10.5px Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(`${sEmoji[si]} ${sN[si]}`,W-89,21);
-
-  if(s2>0.05&&bankParticles.length<200&&Math.random()<s2*.5)bankParticles.push(new EuroNote(W/2+(Math.random()-.5)*bW2*.7,gY+sinkY-bH2*.3+s2*H*.25));
-
-  bankParticles=bankParticles.filter(p=>{p.update();p.draw(ctx);return p.life>0;});
-
+function drawCloud(ctx,x,y,size,color){
+  ctx.fillStyle=color;
+  [[0,0,size*0.5],[size*0.45,-size*0.15,size*0.38],[size*0.9,size*0.05,size*0.4],[size*1.35,0,size*0.35],[-size*0.35,size*0.1,size*0.3]].forEach(function(pt){
+    ctx.beginPath(); ctx.arc(x+pt[0],y+pt[1],pt[2],0,Math.PI*2); ctx.fill();
+  });
 }
 
-function bankAnimLoop(){drawCartoonBank();bankRafId=requestAnimationFrame(bankAnimLoop);}
+function drawBankStress() {
+  var cvs = document.getElementById('bank-canvas'); if(!cvs) return;
+  var ctx=cvs.getContext('2d'), W=cvs.width, H=cvs.height;
+  if (W < 10 || H < 10) return;  // skip if canvas not properly sized
+  bankWave += 0.045;
+  var s2=bankStress, stg=bankStageVis;
+  ctx.clearRect(0,0,W,H);
+  // Sky gradient
+  var skyPal=[['#b8d8f8','#ddeeff'],['#c0c8f0','#dde0ff'],['#d8c0e8','#f0d8f8'],['#f0b8a8','#fdd8c8'],['#e89090','#fcc0b0']];
+  var sp=skyPal[Math.min(stg,4)];
+  var skyG=ctx.createLinearGradient(0,0,0,H*0.65); skyG.addColorStop(0,sp[0]); skyG.addColorStop(1,sp[1]);
+  ctx.fillStyle=skyG; ctx.fillRect(0,0,W,H);
+  // Clouds
+  if(stg<=1){ for(var ci=0;ci<3;ci++){var cxc=(ci*W*0.35+W*0.08+bankWave*6)%(W+80)-40; drawCloud(ctx,cxc,H*0.08+ci*H*0.04,40+ci*15,'rgba(255,255,255,.7)');} }
+  else{ var ca=Math.min(0.65,(stg-1.5)*0.32); for(var ci2=0;ci2<3;ci2++){var cxc2=(ci2*W*0.35+W*0.08+bankWave*8)%(W+80)-40; drawCloud(ctx,cxc2,H*0.06+ci2*H*0.04,50+ci2*18,stg>=3?'rgba(160,80,80,'+ca+')':'rgba(120,80,160,'+ca+')');} }
+  // Ground
+  var gY=H*0.7;
+  var gG=ctx.createLinearGradient(0,gY,0,H); gG.addColorStop(0,'#6ab06a'); gG.addColorStop(1,'#4a8a4a');
+  ctx.fillStyle=gG; ctx.fillRect(0,gY,W,H-gY);
+  ctx.strokeStyle='#5a9a5a'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,gY); ctx.lineTo(W,gY); ctx.stroke();
+  for(var g=0;g<8;g++){var gx=g*(W/8)+12; ctx.strokeStyle='#3a7a3a'; ctx.lineWidth=2; for(var t2=0;t2<3;t2++){ctx.beginPath();ctx.moveTo(gx+t2*8,gY);ctx.quadraticCurveTo(gx+t2*8-3,gY-7,gx+t2*8+3,gY-9);ctx.stroke();}}
+  // Flood water
+  var wH2=s2*H*0.85, wY2=H-wH2;
+  if(wH2>2){
+    var al=Math.min(0.85,0.3+s2*0.58);
+    var wG3=ctx.createLinearGradient(0,wY2,0,H); wG3.addColorStop(0,'rgba(60,120,200,'+al*0.7+')'); wG3.addColorStop(1,'rgba(30,70,150,'+al+')');
+    ctx.fillStyle=wG3; ctx.fillRect(0,wY2,W,wH2);
+    ctx.beginPath(); ctx.moveTo(0,wY2);
+    for(var xw=0;xw<=W;xw+=3){var ampW=3+s2*7; ctx.lineTo(xw,wY2+Math.sin(xw*0.042+bankWave)*ampW+Math.sin(xw*0.078-bankWave*0.65)*ampW*0.5);}
+    ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+    var wF=ctx.createLinearGradient(0,wY2,0,H); wF.addColorStop(0,'rgba(80,160,255,'+al*0.75+')'); wF.addColorStop(1,'rgba(20,80,180,'+al+')');
+    ctx.fillStyle=wF; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0,wY2);
+    for(var xw2=0;xw2<=W;xw2+=3) ctx.lineTo(xw2,wY2+Math.sin(xw2*0.042+bankWave)*(3+s2*7));
+    ctx.strokeStyle='rgba(180,220,255,'+(0.3+s2*0.3)+')'; ctx.lineWidth=2; ctx.stroke();
+  }
+  // Building
+  var tilt=s2>0.5?(s2-0.5)*0.28:0, sinkY=s2*H*0.52, bW2=138, bH2=98;
+  ctx.save(); ctx.translate(W/2,gY+sinkY); ctx.rotate(tilt);
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.18)'; ctx.shadowBlur=14; ctx.shadowOffsetY=5;
+  for(var st=0;st<3;st++){rrect(ctx,-bW2/2-st*8+2,bH2-st*7,bW2+st*16-4,8,3); ctx.fillStyle=stg>=3?'hsl(0,25%,'+(68-st*4)+'%)':'hsl(225,35%,'+(78-st*4)+'%)'; ctx.fill(); ctx.strokeStyle=stg>=3?'#ccaaaa':'#a0b2dc'; ctx.lineWidth=2; ctx.stroke();}
+  rrect(ctx,-bW2/2,-bH2,bW2,bH2+22,6);
+  var bG2=ctx.createLinearGradient(-bW2/2,-bH2,bW2/2,bH2);
+  if(stg>=3){bG2.addColorStop(0,'#f0d8d8');bG2.addColorStop(1,'#e0c0c0');}else{bG2.addColorStop(0,'#dde8ff');bG2.addColorStop(1,'#c8d6f5');}
+  ctx.fillStyle=bG2; ctx.fill(); ctx.restore();
+  ctx.strokeStyle=stg>=3?'#cc8888':'#8899cc'; ctx.lineWidth=3; ctx.stroke();
+  for(var cc=0;cc<5;cc++){var cxx=-bW2/2+14+cc*(bW2-28)/4-5; rrect(ctx,cxx,-bH2+12,10,bH2-30,3); ctx.fillStyle=stg>=3?'#e8c8c8':'#c8d8f0'; ctx.fill(); ctx.strokeStyle=stg>=3?'#cc8888':'#9aaae0'; ctx.lineWidth=2; ctx.stroke(); rrect(ctx,cxx-3,-bH2+10,16,5,2); ctx.fillStyle=stg>=3?'#d8b0b0':'#b8ccec'; ctx.fill();}
+  ctx.beginPath(); ctx.moveTo(-bW2/2-8,-bH2+2); ctx.lineTo(0,-bH2-26); ctx.lineTo(bW2/2+8,-bH2+2); ctx.closePath();
+  ctx.fillStyle=stg>=3?'#e8c0c0':'#bccce8'; ctx.fill(); ctx.strokeStyle=stg>=3?'#bb7777':'#7088cc'; ctx.lineWidth=3; ctx.stroke();
+  var winC=stg>=3?'rgba(255,160,120,.8)':'rgba(180,220,255,.85)', winBC=stg>=3?'#cc6666':'#6699cc';
+  [[-45,-bH2+22],[-15,-bH2+22],[15,-bH2+22],[45,-bH2+22],[-45,-bH2+50],[-15,-bH2+50],[15,-bH2+50],[45,-bH2+50]].forEach(function(wp2){var wx2=wp2[0],wy2=wp2[1]; rrect(ctx,wx2-8,wy2,16,14,3);ctx.fillStyle=winC;ctx.fill();ctx.strokeStyle=winBC;ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.moveTo(wx2-6,wy2+2);ctx.lineTo(wx2-2,wy2+2);ctx.lineTo(wx2-5,wy2+5);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();});
+  rrect(ctx,-11,bH2-36,22,27,4); ctx.fillStyle=stg>=3?'#c08080':'#8090c8'; ctx.fill(); ctx.strokeStyle=stg>=3?'#aa5555':'#5060a8'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(7,bH2-22,2.5,0,Math.PI*2); ctx.fillStyle='#ffd700'; ctx.fill();
+  if(s2>0.45){var ca2=Math.min(1,(s2-0.45)*2); ctx.strokeStyle='rgba(160,60,60,'+ca2*0.7+')'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(-25,-bH2+35); ctx.lineTo(-14,-bH2+52); ctx.lineTo(-22,-bH2+64); ctx.stroke(); ctx.beginPath(); ctx.moveTo(28,-bH2+44); ctx.lineTo(18,-bH2+58); ctx.lineTo(25,-bH2+72); ctx.stroke();}
+  ctx.font='bold 13px "Segoe UI",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.lineWidth=4; ctx.strokeText('BANK',0,-bH2+9);
+  ctx.fillStyle=stg>=3?'#a03030':'#3a4ea0'; ctx.fillText('BANK',0,-bH2+9);
+  ctx.restore();
+  // Emote
+  var emotes=[null,'\u{1F61F}','\u{1F630}','\u{1F631}','\u{1F480}'];
+  if(stg>=1 && emotes[Math.min(stg,4)]){ctx.font='26px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(emotes[Math.min(stg,4)],W/2,gY+sinkY-bH2-42+Math.sin(bankWave*1.5)*5);}
+  // Stage badge
+  var type3=document.getElementById('cfg-type').value, m3=EVENT_MODELS[type3];
+  var sC=['#3d5fe0','#7c5cdb','#c08000','#e06b1a','#d93030'];
+  var sEmoji2=['\u2705','\uD83D\uDC41','\u26A0\uFE0F','\uD83C\uDD98','\u2620'];
+  var si=Math.min(stg,4);
+  rrect(ctx,W-178,7,172,28,8); ctx.fillStyle='rgba(255,255,255,.92)'; ctx.fill(); ctx.strokeStyle=sC[si]; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=sC[si]; ctx.font='bold 10.5px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(sEmoji2[si]+' '+m3.stages[si], W-92, 21);
+  // Particles
+  if(s2>0.05 && bankParticles.length<200 && Math.random()<s2*0.5)
+    bankParticles.push(new EuroNote(W/2+(Math.random()-0.5)*bW2*0.7, gY+sinkY-bH2*0.3+s2*H*0.25));
+  bankParticles = bankParticles.filter(function(p){ p.update(); p.draw(ctx); return p.life>0; });
+}
 
-function startBankAnim(){if(!bankRafId){const c=document.getElementById('bank-canvas');if(c){c.width=c.offsetWidth||580;c.height=240;}bankAnimLoop();}}
+function bankAnimLoop() { drawBankStress(); bankRafId=requestAnimationFrame(bankAnimLoop); }
 
-function stopBankAnim(){if(bankRafId){cancelAnimationFrame(bankRafId);bankRafId=null;}}
+function startBankAnim() {
+  if (bankRafId) { cancelAnimationFrame(bankRafId); bankRafId=null; }
+  var c = document.getElementById('bank-canvas');
+  if (c) {
+    // Force layout by checking parent, fallback to fixed size
+    var parent = c.parentElement;
+    var w = parent ? parent.getBoundingClientRect().width : 0;
+    c.width  = w > 50 ? Math.floor(w) : 500;
+    c.height = 240;
+  }
+  bankAnimLoop();
+}
 
-function setBankState(stress,stage){bankStress=stress;bankStageVis=stage;}
-
+function stopBankAnim() { if(bankRafId){ cancelAnimationFrame(bankRafId); bankRafId=null; } }
+function setBankState(stress, stage) { bankStress=stress; bankStageVis=stage; }
 </script>
-
 </body>
-
 </html>
