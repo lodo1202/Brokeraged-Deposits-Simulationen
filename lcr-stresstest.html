@@ -133,6 +133,31 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .info-box{background:rgba(61,95,224,.05);border:1.5px solid rgba(61,95,224,.18);border-radius:10px;padding:14px;font-size:.77rem;color:var(--muted);line-height:1.6}
 .info-box .ib-title{font-weight:700;color:var(--accent);margin-bottom:5px}
 @media(max-width:700px){.grid2{grid-template-columns:1fr}.stages{flex-wrap:wrap}.slider-row{grid-template-columns:140px 1fr 60px}}
+
+
+/* === ECHTES ONE-SCREEN-DASHBOARD: Animation Mitte, Parameter links/rechts === */
+:root{--topbar-h:52px}
+html,body{height:100%;overflow:hidden}
+body{min-height:100vh}
+.topbar{position:relative;top:auto;height:var(--topbar-h);padding:8px 18px;gap:12px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.logo{font-size:.82rem}.nb{padding:5px 14px;font-size:.73rem}.mode-toggle{font-size:.7rem}
+.scene{height:calc(100vh - var(--topbar-h));max-width:none;width:100%;padding:8px 10px 10px;margin:0;overflow:hidden;animation:none}
+.scene.on{display:flex;flex-direction:column}
+.hint-box{position:absolute;left:10px;right:10px;top:58px;z-index:30;margin:0;padding:10px 14px;box-shadow:var(--shadow)}
+.dashboard{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);gap:7px;overflow:hidden}
+.dash-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;min-height:34px;overflow:hidden}
+.dash-title-wrap{min-width:0}.dash-tag{font-size:.58rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dash-title{font-size:1.05rem;font-weight:850;line-height:1.05;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dash-sub{font-size:.66rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dash-mini{font-size:.64rem;color:var(--muted);white-space:nowrap}
+.dash-cols{min-height:0;display:grid;gap:8px;overflow:hidden;height:100%}.dash-lcr .dash-cols{grid-template-columns:minmax(315px,360px) minmax(340px,.82fr) minmax(330px,390px)}.dash-run .dash-cols{grid-template-columns:minmax(330px,385px) minmax(340px,.82fr) minmax(330px,390px)}
+.dash-col{min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px}.dash-center{justify-content:stretch}.dash-panel{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px;min-height:0;overflow:hidden}.dash-panel.fill{flex:1;display:flex;flex-direction:column}.dash-panel.compact{padding:8px}.dash-panel-title{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-bottom:6px}
+.dashboard .card{padding:10px;box-shadow:none;border-radius:10px}.dashboard .card-title{font-size:.6rem;margin-bottom:7px}.dashboard .divider{margin:8px 0}.dashboard .info-box{font-size:.66rem;line-height:1.38;padding:9px;border-radius:9px}.dashboard .preset-row{margin-bottom:8px;gap:5px}.dashboard .preset-row .btn-outline,.dashboard .btn-sm{padding:4px 8px;font-size:.66rem}.dashboard .btn,.dashboard .btn-ghost,.dashboard .btn-outline{padding:6px 10px;font-size:.7rem;border-radius:7px}
+.dashboard .slider-row{grid-template-columns:112px minmax(72px,1fr) 78px;gap:8px;margin-bottom:8px}.dashboard .slider-row label{font-size:.67rem;line-height:1.12}.dashboard .slider-row label small{font-size:.54rem}.dashboard .num-input-wrap{width:78px}.dashboard .num-input-wrap input[type=number]{width:78px;padding:4px 24px 4px 6px;font-size:.7rem;text-align:right}.dashboard .num-input-wrap::after{right:7px;font-size:.62rem}.dashboard .num-input-mio{width:84px}.dashboard .num-input-mio input[type=number]{width:84px;padding-right:31px}.dashboard .num-input-mio::after{right:7px;font-size:.6rem}.dashboard .total-bar{padding:6px 8px;margin-top:4px}.dashboard .total-note{font-size:.58rem}.dashboard .lcr-formula{font-size:.62rem;padding:7px 8px;margin-top:7px}.dashboard .gauge-big{font-size:2rem}.dashboard .badge{font-size:.63rem;padding:4px 9px}.dashboard .scn-compare{display:grid;grid-template-columns:1fr;gap:6px;margin-top:0}.dashboard .scn-box{padding:8px;font-size:.64rem}.dashboard .scn-box h5{font-size:.62rem;margin-bottom:3px}
+#lcr-canvas{height:100%!important;min-height:360px;border-radius:12px}.lcr-animation-card{flex:1;display:flex;flex-direction:column}.lcr-animation-card canvas{flex:1}.lcr-animation-card .card-title{flex:0 0 auto}.lcr-legend{font-size:.65rem!important}
+.lcr-kpi-card{flex:0 0 auto}.lcr-kpi-card canvas{max-height:112px}.lcr-side-stack{display:flex;flex-direction:column;gap:8px;min-height:0}.lcr-side-stack .info-box{flex:1;overflow:hidden}
+.run-left-tools{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden}.run-controls{display:flex!important;align-items:center;gap:7px!important;margin-bottom:0!important;flex-wrap:wrap}.run-controls span{font-size:.68rem!important}.run-controls #run-time-disp{font-size:.85rem!important}.dashboard .scrubber-wrap{padding:8px 10px;margin-bottom:0}.dashboard .scrubber-wrap>label{font-size:.62rem;margin-bottom:5px}.dashboard .scrubber-ticks{font-size:.52rem}.dashboard .snap-row{margin-bottom:0;gap:4px}.dashboard .snap-btn{padding:4px 7px;font-size:.6rem;border-width:1.5px}.dashboard .stages{margin-bottom:0;gap:3px}.dashboard .stage-pill{font-size:.52rem;padding:4px 2px}.case-panel{padding:8px!important;margin-bottom:0!important;box-shadow:none!important}.case-panel>div:first-child{font-size:.58rem!important;margin-bottom:6px!important}.case-panel #case-factbox{font-size:.6rem!important;line-height:1.3!important;padding:7px!important;max-height:115px;overflow:hidden}.dashboard .cfg-panel{padding:8px;margin-bottom:0;overflow:hidden}.dashboard .cfg-panel summary{font-size:.68rem}.dashboard .cfg-row{gap:6px;margin-top:7px}.dashboard .cfg-row label{font-size:.58rem}.dashboard .cfg-row input[type=number]{width:66px;padding:4px 5px;font-size:.65rem}.dashboard .cfg-row select{max-width:160px;padding:4px 5px;font-size:.63rem}.dashboard #event-desc{font-size:.6rem!important;line-height:1.32!important;margin-top:6px!important;padding:6px!important;max-height:76px;overflow:hidden}
+.bank-animation-panel{flex:1;display:flex;flex-direction:column;min-height:0}.bank-animation-panel canvas#bank-canvas{flex:1;width:100%!important;height:100%!important;min-height:300px;border-radius:12px}.bank-title{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-bottom:6px}.run-chart-panel{height:155px;flex:0 0 155px}.run-chart-panel>div:last-child{height:120px!important}.run-chart-panel canvas{height:120px!important}.run-right .card{margin-bottom:7px!important}.run-right .stat-bar-wrap{margin-bottom:8px}.run-right .stat-bar-label{font-size:.66rem}.run-right .stat-sub{font-size:.58rem}.run-right .outflow-card{padding:9px}.run-right .outflow-val{font-size:1.45rem}.run-right .outflow-pct{font-size:.68rem}.run-right .status-alert{padding:8px;margin-top:0!important;font-size:.66rem;line-height:1.3}.run-right .ref-box{font-size:.6rem;line-height:1.34;padding:8px;margin-top:0!important}
+.scene>.grid2,.scene>.preset-row,.scene>.scene-tag,.scene>.scene-title,.scene>.scene-sub{display:none!important}
+@media(max-width:1050px){.dash-lcr .dash-cols,.dash-run .dash-cols{grid-template-columns:295px minmax(280px,.75fr) 295px}.dashboard .slider-row{grid-template-columns:104px minmax(60px,1fr) 76px}.dash-title{font-size:.9rem}}
+
 </style>
 </head>
 <body>
@@ -513,7 +538,7 @@ function drawLCRBank() {
   var skyG=ctx.createLinearGradient(0,0,0,H); skyG.addColorStop(0,'#ddeeff'); skyG.addColorStop(1,'#eef4ff');
   ctx.fillStyle=skyG; rrect(ctx,0,0,W,H,10); ctx.fill();
   var ok = d.lcr >= 100;
-  var bX=18,bY=18,bW=108,bH=158;
+  var bX=14,bY=32,bW=148,bH=220;
   ctx.save(); ctx.shadowColor='rgba(0,0,0,.12)'; ctx.shadowBlur=10; ctx.shadowOffsetY=4;
   rrect(ctx,bX,bY+28,bW,bH-28,5);
   var bGr=ctx.createLinearGradient(bX,bY+28,bX+bW,bY+bH); bGr.addColorStop(0,'#e8eeff'); bGr.addColorStop(1,'#d0d8f5');
@@ -522,23 +547,30 @@ function drawLCRBank() {
   ctx.beginPath(); ctx.moveTo(bX-7,bY+30); ctx.lineTo(bX+bW/2,bY+5); ctx.lineTo(bX+bW+7,bY+30); ctx.closePath();
   var rGr=ctx.createLinearGradient(bX,bY+5,bX,bY+32); rGr.addColorStop(0,'#b0c0f0'); rGr.addColorStop(1,'#98aae0');
   ctx.fillStyle=rGr; ctx.fill(); ctx.strokeStyle='#7088cc'; ctx.lineWidth=2.5; ctx.stroke();
-  for (var c=0;c<3;c++) { var cx2=bX+14+c*(bW-28)/2-5; rrect(ctx,cx2,bY+32,10,bH-62,3); ctx.fillStyle='#c8d4f0'; ctx.fill(); ctx.strokeStyle='#9aacdc'; ctx.lineWidth=2; ctx.stroke(); rrect(ctx,cx2-3,bY+30,16,5,2); ctx.fillStyle='#b0c4e8'; ctx.fill(); }
-  for (var s2=0;s2<3;s2++) { rrect(ctx,bX-s2*5,bY+bH-s2*6,bW+s2*10,6,2); ctx.fillStyle='hsl(225,35%,'+(80-s2*5)+'%)'; ctx.fill(); ctx.strokeStyle='#a0b0d8'; ctx.lineWidth=1.5; ctx.stroke(); }
-  [[bX+14,bY+48],[bX+bW-34,bY+48],[bX+14,bY+78],[bX+bW-34,bY+78]].forEach(function(wp){
+  for (var c=0;c<3;c++) { var cx2=bX+18+c*(bW-36)/2-7; rrect(ctx,cx2,bY+36,14,bH-76,4); ctx.fillStyle='#c8d4f0'; ctx.fill(); ctx.strokeStyle='#9aacdc'; ctx.lineWidth=2; ctx.stroke(); rrect(ctx,cx2-4,bY+33,22,6,2); ctx.fillStyle='#b0c4e8'; ctx.fill(); }
+  // Attached plinth/base: slightly overlaps the bank body so no visible gap appears
+  for (var s2=0;s2<3;s2++) {
+    var stepY = bY + bH - 8 + s2*6;
+    rrect(ctx,bX-4-s2*6,stepY,bW+8+s2*12,8,3);
+    ctx.fillStyle='hsl(225,35%,'+(78-s2*5)+'%)';
+    ctx.fill();
+    ctx.strokeStyle='#a0b0d8'; ctx.lineWidth=1.5; ctx.stroke();
+  }
+  [[bX+24,bY+62],[bX+bW-48,bY+62],[bX+24,bY+100],[bX+bW-48,bY+100]].forEach(function(wp){
     var wx=wp[0],wy=wp[1];
-    rrect(ctx,wx,wy,18,16,3); var wGr=ctx.createLinearGradient(wx,wy,wx+18,wy+16); wGr.addColorStop(0,'#aad4ff'); wGr.addColorStop(1,'#88b8f0');
+    rrect(ctx,wx,wy,26,22,4); var wGr=ctx.createLinearGradient(wx,wy,wx+26,wy+22); wGr.addColorStop(0,'#aad4ff'); wGr.addColorStop(1,'#88b8f0');
     ctx.fillStyle=wGr; ctx.fill(); ctx.strokeStyle='#6699cc'; ctx.lineWidth=2; ctx.stroke();
     ctx.beginPath(); ctx.moveTo(wx+3,wy+2); ctx.lineTo(wx+7,wy+2); ctx.lineTo(wx+3,wy+6); ctx.closePath(); ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fill();
     ctx.strokeStyle='rgba(100,160,220,.35)'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(wx+9,wy+1); ctx.lineTo(wx+9,wy+15); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(wx+1,wy+8); ctx.lineTo(wx+17,wy+8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wx+13,wy+1); ctx.lineTo(wx+13,wy+21); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wx+1,wy+8); ctx.lineTo(wx+25,wy+11); ctx.stroke();
   });
-  rrect(ctx,bX+bW/2-11,bY+bH-36,22,25,3); ctx.fillStyle='#7080c0'; ctx.fill(); ctx.strokeStyle='#5060a8'; ctx.lineWidth=2; ctx.stroke();
-  ctx.beginPath(); ctx.arc(bX+bW/2+5,bY+bH-23,2.5,0,Math.PI*2); ctx.fillStyle='#ffd700'; ctx.fill();
-  ctx.font='bold 12px "Segoe UI",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  rrect(ctx,bX+bW/2-16,bY+bH-55,32,43,4); ctx.fillStyle='#7080c0'; ctx.fill(); ctx.strokeStyle='#5060a8'; ctx.lineWidth=2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(bX+bW/2+9,bY+bH-33,3.2,0,Math.PI*2); ctx.fillStyle='#ffd700'; ctx.fill();
+  ctx.font='bold 16px "Segoe UI",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.strokeStyle='#8899cc'; ctx.lineWidth=3; ctx.strokeText('BANK',bX+bW/2,bY+17);
   ctx.fillStyle='#3a4ea0'; ctx.fillText('BANK',bX+bW/2,bY+17);
-  var pX=bX+bW+2, pY2=bY+bH-52, tX=bX+bW+50, tY=10, tW=W-tX-14, tH=H-20;
+  var pX=bX+bW+4, pY2=bY+bH-72, tX=bX+bW+64, tY=10, tW=W-tX-14, tH=H-20;
   ctx.beginPath(); ctx.moveTo(pX,pY2-5); ctx.lineTo(pX,pY2+5); ctx.lineTo(tX-2,tY+tH*0.4+5); ctx.lineTo(tX-2,tY+tH*0.4-5); ctx.closePath();
   ctx.fillStyle='#b0c0e0'; ctx.fill();
   ctx.strokeStyle='#8898c8'; ctx.lineWidth=2;
@@ -583,6 +615,7 @@ setTimeout(function(){var c=document.getElementById('lcr-canvas'); if(c){c.width
 /* ══ STRESSTEST ══ */
 var bankWave=0, bankRafId=null, bankStress=0, bankStageVis=0, bankParticles=[];
 window._runStep = 0;
+var activeRunCase = 'custom';
 
 var EVENT_MODELS = {
   trust:{sFloor:88,bFloor:45,iFloor:10,sHalf:72,bHalf:16,iHalf:8,
@@ -594,9 +627,9 @@ var EVENT_MODELS = {
     stageThresholds:[0,3,12,25,40],
     desc:'<strong>Zinsanstieg-Panik (Schwelle: +2–3% Leitzins in 12 Monaten, z.B. Fed 2022–23: +5.25%)</strong>: Rate-sensitive Retail Brokered auf Fintech-Plattformen wechselt in ~10h zu Hochzinsanbietern. Institutional durch Vertragsfristen gebunden (Floor ~55%). Stabile Retail bleibt fast vollständig. Bei gutem HQLA-Puffer keine Bankschliessung — Zinspanik-Abflüsse sind langsamer als Vertrauensschocks.'},
   credit:{sFloor:98,bFloor:70,iFloor:50,sHalf:300,bHalf:60,iHalf:30,
-    stages:['Normal','Rating-Warnung','Wholesale-Abfluss','Anhaltende Abflüsse','SNB-Intervention'],
+    stages:['Normal','Q4-Vertrauensverlust','Oktober-Abfluss','Fragile Stabilisierung','März-Akutphase'],
     stageThresholds:[0,3,10,20,35],
-    desc:'<strong>Bonitätsverschlechterung / CS-Typ (langsam, über Wochen)</strong> — 1 Simulationsstunde = ca. 15 Realstunden: Institutional reagiert auf Ratingdruck langsam (HWZ ~30 Sim-h = ~3 Wochen real). WM/Brokered folgt noch langsamer (HWZ ~60h = ~6 Wochen real). Swiss Retail nahezu stabil (Floor 98%). Bei T+48h (ca. 30 Tage real) ~28% Abfluss — entspricht CS Q1 2023 CHF 67 Mrd. Total 6 Monate (Q4 2022 + Q1 2023): 55% von CHF 371 Mrd. Ausgangsbasis. Bank durch SNB ELA CHF 168 Mrd. gestützt.'},
+    desc:'<strong>Credit-Suisse-Typ (phasisch, nicht SVB-artig)</strong>: Die Kurve ist nicht mehr als 24h-Bankrun modelliert. Sie folgt historischen Meilensteinen: ca. zwei Drittel des Q4-2022-Abflusses im Oktober, CHF 138 Mrd. Depositenabfluss bis Ende Q4 und nochmals CHF 67 Mrd. Depositenabfluss im Q1 2023, vor allem in der zweiten Märzhälfte. Swiss Retail bleibt bewusst fast stabil.'},
   sys:{sFloor:68,bFloor:22,iFloor:5,sHalf:28,bHalf:8,iHalf:5,
     stages:['Normal','Systemalarm','Massiver Abfluss','Fast alle Typen','Existenzkrise'],
     stageThresholds:[0,8,20,38,55],
@@ -627,7 +660,7 @@ var CASE_PRESETS = {
       '&bull; <strong>Total erwartet 2 Tage:</strong> $142 Mrd. = <strong>81%</strong> der Gesamteinlagen (Barr: «81% of SVB deposits»)<br>' +
       '&bull; <strong>Tatsächlich vollzogen:</strong> nur $42 Mrd. (24%) — Bank wurde am 10. März 09:00 Uhr geschlossen, bevor Tag 2 eintrat<br>' +
       '&bull; <strong>Schliessungsgrund:</strong> Negatives Cash-Saldo von ~$958 Mio. am Abend des 9. März · SVB konnte «cash letter» bei der Fed nicht mehr decken<br><br>' +
-      '<strong>Simulator-Hinweis:</strong> T+48h zeigt ~81% Abfluss = hypothetisches Ende wenn Bank nicht geschlossen worden wäre. Historisch realisiert: nur 24% (Tag 1) bevor Schliessung alle weiteren Abflüsse stoppte.<br>' +
+      '<strong>Simulator-Hinweis:</strong> Ab T+24h zeigt der Status bewusst «Schliessungsrisiko / historischer Schliessungspunkt». T+48h zeigt ~81% Abfluss = hypothetisches Ende, wenn die Bank nicht geschlossen worden wäre. Historisch realisiert: ca. 24% (Tag 1), bevor die Schliessung weitere Abflüsse stoppte.<br>' +
       '<strong>Warum so schnell?</strong> 94% institutionell/VC — VC-Netzwerke und WhatsApp-Gruppen koordinierten Abzug innerhalb von Stunden. Kein versichertes Retail als Anker.'
   },
   cs: {
@@ -638,16 +671,18 @@ var CASE_PRESETS = {
       '&bull; Anfang Q4 2022: <strong>CHF 371 Mrd.</strong> (Ausgangsbasis)<br>' +
       '&bull; Ende Q4 2022: <strong>CHF 233 Mrd.</strong> → Abfluss CHF 138 Mrd. = <strong>37%</strong> in ~12 Wochen<br>' +
       '&bull; Ende Q1 2023: <strong>CHF 166 Mrd.</strong> → weiterer Abfluss CHF 67 Mrd. = <strong>29%</strong> der Resteinlagen<br>' +
-      '&bull; Gesamt: CHF 205 Mrd. / CHF 371 Mrd. = <strong>55%</strong> über 6 Monate (verifiziert)<br><br>' +
-      '<strong style="color:#e06b1a">⏱ Zeitmassstab Simulator: 1 Sim-Stunde ≈ 90 Realstunden (~3.75 Tage)</strong><br>' +
-      'T+48h im Simulator = ~180 Realstunden = ca. 7.5 Realtage (Akutphase März 2023)<br><br>' +
+      '&bull; Gesamt: CHF 205 Mrd. / CHF 371 Mrd. = <strong>55.3%</strong> über 6 Monate (verifiziert)<br>' +
+      '&bull; Wichtig: Das ist <strong>kein 24h-Run</strong>. Die akute Phase lag in der zweiten Märzhälfte, nicht am Anfang der 180-Tage-Achse.<br><br>' +
+      '<strong style="color:#e06b1a">⏱ Zeitachse Simulator: T+0 bis T+180 Tage</strong><br>' +
+      'T+0 = Anfang Q4 2022 · T+31d ≈ Ende Oktober · T+90d ≈ Ende Q4 2022 · T+165–180d ≈ akute Märzphase / Ende Q1 2023.<br><br>' +
       '<strong>Akutphase 15.–19. März 2023:</strong> Saudi National Bank sagte «absolutely not» auf weitere Kapitalerhöhung. Zusammen mit SVB-Schock: massiver Abfluss in wenigen Tagen. SNB stützte mit CHF 168 Mrd. ELA — grösste Einzelbank-Nothilfe aller Zeiten.<br><br>' +
       '<strong>Swiss Retail (25%): nur 1% Abfluss in Q1 2023</strong> — Einlagensicherung CHF 100k und Beziehungsbanking wirkten als Anker. Gegensatz zu SVB: 94% unversichert, 0% stabiles Retail.'
   },
-  custom: { factbox: null }
+  custom: { type: 'trust', s: 400, b: 300, i: 200, spd: 300, factbox: null }
 };
 
 function loadCase(key) {
+  activeRunCase = key || 'custom';
   var p = CASE_PRESETS[key];
   if (!p) return;
   if (p.type) document.getElementById('cfg-type').value = p.type;
@@ -657,9 +692,93 @@ function loadCase(key) {
   if (p.spd !== undefined) document.getElementById('cfg-spd').value = p.spd;
   var fb = document.getElementById('case-factbox');
   if (p.factbox) { fb.innerHTML = p.factbox; fb.style.display = 'block'; }
-  else { fb.innerHTML = '<span style="color:var(--muted)">Eigene Eingabe: Einlagen und Ereignistyp frei konfigurierbar.</span>'; fb.style.display = 'block'; }
+  else { fb.innerHTML = '<span style="color:var(--muted)">Eigene Eingabe: Einlagen und Ereignistyp frei konfigurierbar. Die Zeitachse läuft bewusst über 30 Tage.</span>'; fb.style.display = 'block'; }
+  updateRunTimelineUI();
   resetRun();
   onEventTypeChange();
+}
+
+
+/* ── Fallabhängige Zeitachse ───────────────────────────────────────────────
+   SVB: 0–48 Stunden, passend zum Bank-Run vom 9./10. März 2023.
+   Credit Suisse: 0–180 Tage, passend zum Q4-2022/Q1-2023-Abfluss.
+   Eigene Eingabe: 0–30 Tage, damit frei präsentierbar und nicht SVB/CS-spezifisch.
+─────────────────────────────────────────────────────────────────────────── */
+var RUN_TIMELINES = {
+  svb:    {max:48,  unit:'h',    label:'SVB: 48 Stunden',       ticks:[0,6,12,24,36,44,48], snaps:[0,24,44,48]},
+  cs:     {max:180, unit:'d',    label:'Credit Suisse: 180 Tage', ticks:[0,31,60,90,120,150,165,180], snaps:[0,31,90,165,180]},
+  custom: {max:30,  unit:'d',    label:'Eigene Eingabe: 30 Tage', ticks:[0,5,10,15,20,25,30], snaps:[0,7,14,21,30]}
+};
+function getRunTimeline(){ return RUN_TIMELINES[activeRunCase] || RUN_TIMELINES.custom; }
+function fmtRunTime(t){
+  var tl=getRunTimeline();
+  if(tl.unit==='h'){
+    var hh=Math.floor(t), mm=Math.round((t%1)*60);
+    return 'T+'+hh+'h'+(mm?(' '+(mm<10?'0':'')+mm+'min'):'');
+  }
+  var d=Math.floor(t), h=Math.round((t%1)*24);
+  return 'T+'+d+'d'+(h?(' '+h+'h'):'');
+}
+function updateRunTimelineUI(){
+  var tl=getRunTimeline();
+  var slider=document.getElementById('run-time-slider');
+  if(slider){ slider.max=tl.max; slider.step=tl.unit==='h' ? 1 : 1; if(+slider.value>tl.max) slider.value=tl.max; }
+  var ticks=document.querySelector('.scrubber-ticks');
+  if(ticks) ticks.innerHTML = tl.ticks.map(function(v){ return '<span>T+'+v+tl.unit+'</span>'; }).join('');
+  var snap=document.querySelector('.snap-row');
+  if(snap) snap.innerHTML = tl.snaps.map(function(v,idx){
+    var cls=['s0','s6','s12','s24','s48'][idx] || 's48';
+    return '<button class="snap-btn '+cls+'" onclick="jumpToTime('+v+')">T+'+v+tl.unit+'</button>';
+  }).join('');
+  var lab=document.querySelector('.scrubber-wrap > label');
+  if(lab) lab.textContent='Zeitnavigation — '+tl.label+':';
+}
+function getRemainingPct(kind, t, m){
+  // SVB: Tag 1 rund 24% Abfluss, Tag 2 erwartet rund 81% des Gesamtportfolios.
+  if(activeRunCase==='svb'){
+    // SVB kalibriert auf die publizierten Portfolio-Werte:
+    // T+24h: ca. 24% Gesamtabfluss ($42 Mrd. von $175.4 Mrd.)
+    // T+48h: ca. 81% Gesamtabfluss, falls die erwarteten weiteren $100 Mrd. abgeflossen wären.
+    // Bei SVB liegt der Abfluss praktisch vollständig auf Institutional/VC-Deposits.
+    if(kind==='s') return 99;
+    if(kind==='b') return 100;
+    if(kind==='i') {
+      var pts = [[0,100],[24,75.7416],[48,18.1011]]; // Institutional remaining %, calibrated so total outflow is 24.0% at 24h and 81.0% at 48h
+      for(var si=0; si<pts.length-1; si++){
+        var a=pts[si], b=pts[si+1];
+        if(t>=a[0] && t<=b[0]){
+          var r=(t-a[0])/(b[0]-a[0]);
+          return a[1]+(b[1]-a[1])*r;
+        }
+      }
+      return pts[pts.length-1][1];
+    }
+  }
+  // Credit Suisse: historische Meilensteine statt glatter 24h-Run.
+  // Skalierung auf 1000 Mio Startbasis: Tag 31 ≈ Ende Okt. 2022 (~2/3 des Q4-Abflusses),
+  // Tag 90 ≈ Ende Q4 2022 (CHF 138 Mrd. von CHF 371 Mrd. = 37.2%),
+  // Tag 180 ≈ Ende Q1 2023 (zusätzlich CHF 67 Mrd.; kumuliert 55.3%).
+  if(activeRunCase==='cs'){
+    var milestones = {
+      // Swiss Retail bleibt fast stabil; Q1-Abfluss in Swiss Bank war deutlich kleiner als WM/Wholesale.
+      s:[[0,100],[31,99.9],[90,99.7],[150,99.4],[165,99.1],[180,98.8]],
+      // Wealth Management / brokered: Abfluss zuerst stark im Oktober, danach langsamer, im März erneut Druck.
+      b:[[0,100],[31,78],[90,70],[150,66],[165,56],[180,42]],
+      // Institutional / wholesale: stärkster Vertrauensabfluss.
+      i:[[0,100],[31,57.4],[90,33.7],[150,28.8],[165,20.5],[180,13.2]]
+    }[kind];
+    for(var a=0;a<milestones.length-1;a++){
+      var p0=milestones[a], p1=milestones[a+1];
+      if(t>=p0[0] && t<=p1[0]){
+        var r=(t-p0[0])/(p1[0]-p0[0]);
+        // Smoothstep: weniger künstlich linear, aber exakt auf den historischen Meilensteinen.
+        r = r*r*(3-2*r);
+        return p0[1]+(p1[1]-p0[1])*r;
+      }
+    }
+    return milestones[milestones.length-1][1];
+  }
+  return decayFloor(t, m[kind+'Half'], m[kind+'Floor']);
 }
 
 function decayFloor(t, half, floor) {
@@ -667,6 +786,8 @@ function decayFloor(t, half, floor) {
 }
 
 function onEventTypeChange() {
+  if(activeRunCase !== 'svb' && activeRunCase !== 'cs') activeRunCase = 'custom';
+  updateRunTimelineUI();
   var type = document.getElementById('cfg-type').value;
   var m = EVENT_MODELS[type];
   document.getElementById('event-desc').innerHTML = m.desc;
@@ -677,7 +798,11 @@ function onEventTypeChange() {
 
 /* ── Chart (lazy init when tab becomes visible) ── */
 var runLabels = [];
-for (var ri=0; ri<49; ri++) { runLabels.push(ri%6===0 ? 'T+'+ri+'h' : ''); }
+function makeRunLabels(){
+  var tl=getRunTimeline(), arr=[];
+  for(var ri=0; ri<=tl.max; ri++) arr.push(tl.ticks.indexOf(ri)>=0 ? 'T+'+ri+tl.unit : '');
+  return arr;
+}
 
 function initRunChart() {
   if (runChartReady) return;
@@ -685,10 +810,10 @@ function initRunChart() {
   if (!canvas) return;
   runChart = new Chart(canvas, {
     type: 'line',
-    data: {labels: runLabels, datasets: [
-      {label:'Stabile Retail',         data:new Array(49).fill(null), borderColor:'#0e9e6b', backgroundColor:'rgba(14,158,107,.07)', tension:0.4, fill:true, pointRadius:0, borderWidth:2.5},
-      {label:'Retail Brokered',        data:new Array(49).fill(null), borderColor:'#3d5fe0', backgroundColor:'rgba(61,95,224,.06)',  tension:0.4, fill:true, pointRadius:0, borderWidth:2.5},
-      {label:'Institutional Brokered', data:new Array(49).fill(null), borderColor:'#d93030', backgroundColor:'rgba(217,48,48,.06)', tension:0.4, fill:true, pointRadius:0, borderWidth:2.5}
+    data: {labels: makeRunLabels(), datasets: [
+      {label:'Stabile Retail',         data:new Array(getRunTimeline().max+1).fill(null), borderColor:'#0e9e6b', backgroundColor:'rgba(14,158,107,.07)', tension:0.4, fill:true, pointRadius:0, borderWidth:2.5},
+      {label:'Retail Brokered',        data:new Array(getRunTimeline().max+1).fill(null), borderColor:'#3d5fe0', backgroundColor:'rgba(61,95,224,.06)',  tension:0.4, fill:true, pointRadius:0, borderWidth:2.5},
+      {label:'Institutional Brokered', data:new Array(getRunTimeline().max+1).fill(null), borderColor:'#d93030', backgroundColor:'rgba(217,48,48,.06)', tension:0.4, fill:true, pointRadius:0, borderWidth:2.5}
     ]},
     options: {
       responsive:true, maintainAspectRatio:false,
@@ -705,21 +830,35 @@ function initRunChart() {
 
 function drawFullCurves() {
   if (!runChart) return;
-  var type = document.getElementById('cfg-type').value, m = EVENT_MODELS[type];
-  for (var h=0; h<49; h++) {
-    runChart.data.datasets[0].data[h] = parseFloat(decayFloor(h,m.sHalf,m.sFloor).toFixed(1));
-    runChart.data.datasets[1].data[h] = parseFloat(decayFloor(h,m.bHalf,m.bFloor).toFixed(1));
-    runChart.data.datasets[2].data[h] = parseFloat(decayFloor(h,m.iHalf,m.iFloor).toFixed(1));
+  var type = document.getElementById('cfg-type').value, m = EVENT_MODELS[type], tl=getRunTimeline();
+  runChart.data.labels = makeRunLabels();
+  runChart.data.datasets.forEach(function(ds){ ds.data = new Array(tl.max+1).fill(null); });
+  for (var h=0; h<=tl.max; h++) {
+    runChart.data.datasets[0].data[h] = parseFloat(getRemainingPct('s',h,m).toFixed(1));
+    runChart.data.datasets[1].data[h] = parseFloat(getRemainingPct('b',h,m).toFixed(1));
+    runChart.data.datasets[2].data[h] = parseFloat(getRemainingPct('i',h,m).toFixed(1));
   }
+  runChart.options.scales.x.ticks.maxTicksLimit = Math.min(9, tl.ticks.length);
   runChart.update('none');
 }
 
 /* ── Status alert ── */
-function updateStatusAlert(outPct, type) {
+function updateStatusAlert(outPct, type, currentT) {
   var m = EVENT_MODELS[type];
   var thr = m.stageThresholds;
   var level = 0;
-  for (var i=thr.length-1; i>=0; i--) { if (outPct >= thr[i]) { level=i; break; } }
+  if(activeRunCase==='svb') {
+    // SVB ist ein Sonderfall: Der Status soll nicht nur vom Prozentwert abhängen.
+    // Historisch führte der 24%-Abfluss am ersten Tag bereits zur faktischen Nicht-Überlebensfähigkeit;
+    // alles nach T+24h ist im Simulator als hypothetischer weiterer Run zu lesen.
+    var h = currentT || 0;
+    level = h >= 24 ? 4 : h >= 18 ? 3 : h >= 8 ? 2 : h > 0 ? 1 : 0;
+  } else if(activeRunCase==='cs') {
+    var d = currentT || 0;
+    level = d >= 165 ? 4 : d >= 90 ? 3 : d >= 31 ? 2 : d >= 10 ? 1 : 0;
+  } else {
+    for (var i=thr.length-1; i>=0; i--) { if (outPct >= thr[i]) { level=i; break; } }
+  }
   var el=document.getElementById('status-alert'), icon=document.getElementById('status-icon');
   var title=document.getElementById('status-title'), desc=document.getElementById('status-desc');
   var descs=[
@@ -729,11 +868,30 @@ function updateStatusAlert(outPct, type) {
     'Schwere Liquiditätskrise. BRRD «Early Intervention» möglich. Notfallplan aktiviert.',
     'Existenzielle Krise — «Failing or Likely to Fail» (BRRD Art. 32). Behörden können Bank schliessen.'
   ];
+  if(activeRunCase==='svb'){
+    descs=[
+      'Startpunkt vor dem Run. Noch keine Abflüsse sichtbar.',
+      'Erste digitale/VC-getriebene Abflüsse beginnen.',
+      'Schneller Institutional-Abfluss; Liquiditätslage kippt deutlich.',
+      'Aufsicht/Notfallmodus: Cash-Position kritisch, Schliessungsrisiko steigt stark.',
+      'Historischer Kipppunkt: ca. 24% Abfluss am ersten Tag. Ab T+24h gilt die weitere Kurve als hypothetisch, weil SVB danach geschlossen wurde.'
+    ];
+  } else if(activeRunCase==='cs'){
+    descs=[
+      'Startpunkt Anfang Q4 2022. Noch kein SVB-artiger Tagesrun.',
+      'Vertrauen erodiert; im Oktober konzentriert sich ein grosser Teil des Q4-Abflusses.',
+      'Q4-Abflüsse laufen weiter, aber nicht als 24h-Kollaps.',
+      'Fragile Stabilisierung bis vor die Märzwoche; Abflüsse bleiben erhöht.',
+      'Akute Märzwoche: starke Abflüsse kurz vor/nach UBS-Übernahme, danach auf tieferem Niveau stabilisiert.'
+    ];
+  }
   var classes=['ok','watch','stress','critical','critical'];
   var icons=['✅','👁','⚠️','🆘','☠'];
   el.className = 'status-alert '+classes[level];
   icon.textContent = icons[level];
-  title.textContent = m.stages[level]+' ('+outPct.toFixed(1)+'% Abfluss)';
+  var displayTitle = m.stages[level];
+  if(activeRunCase==='svb' && level===4) displayTitle = 'Schliessungsrisiko / historischer Schliessungspunkt';
+  title.textContent = displayTitle+' ('+outPct.toFixed(1)+'% Abfluss)';
   desc.textContent = descs[level];
   document.querySelectorAll('.stage-pill').forEach(function(p){ p.classList.toggle('active', parseInt(p.dataset.stg)===level); });
   return level;
@@ -743,7 +901,7 @@ function updateStatusAlert(outPct, type) {
 var isRun=false, runRafId=null, runLastTs=null;
 
 function jumpToTime(t) {
-  t = Math.min(Math.max(+t, 0), 48);
+  t = Math.min(Math.max(+t, 0), getRunTimeline().max);
   if (isRun) { cancelAnimationFrame(runRafId); runRafId=null; isRun=false; runLastTs=null; document.getElementById('run-btn').textContent='▶ Fortsetzen'; document.getElementById('run-btn').className='btn'; }
   window._runStep = t;
   _applyTime(t);
@@ -755,18 +913,42 @@ function _applyTime(t) {
   var B0=parseFloat(document.getElementById('cfg-b').value)||300;
   var I0=parseFloat(document.getElementById('cfg-i').value)||200;
   var TOT = S0+B0+I0;
-  var sv=decayFloor(t,m.sHalf,m.sFloor), bv=decayFloor(t,m.bHalf,m.bFloor), iv=decayFloor(t,m.iHalf,m.iFloor);
+  var sv=getRemainingPct('s',t,m), bv=getRemainingPct('b',t,m), iv=getRemainingPct('i',t,m);
+
+  // SVB: Anzeige auf die historischen Gesamtwerte kalibrieren.
+  // T+24h = 24.0% realisierter Tagesabfluss; T+48h = 81.0% hypothetisch erwarteter Gesamt-Abfluss.
+  // Der Abfluss wird fast vollständig den Institutional/VC-Deposits zugeordnet.
+  var forcedOutPct = null;
+  if (activeRunCase === 'svb') {
+    var svbPts = [[0,0],[24,24.0],[48,81.0]];
+    for (var sp=0; sp<svbPts.length-1; sp++) {
+      var p0=svbPts[sp], p1=svbPts[sp+1];
+      if (t>=p0[0] && t<=p1[0]) {
+        var rr=(t-p0[0])/(p1[0]-p0[0]);
+        forcedOutPct = p0[1] + (p1[1]-p0[1])*rr;
+        break;
+      }
+    }
+    if (forcedOutPct === null) forcedOutPct = 81.0;
+    sv = 99.0;
+    bv = 100.0;
+    if (I0 > 0) {
+      var targetOutMio = TOT * forcedOutPct / 100;
+      var nonInstOutMio = S0*(1-sv/100) + B0*(1-bv/100);
+      iv = Math.max(0, Math.min(100, 100 - ((targetOutMio - nonInstOutMio) / I0 * 100)));
+    }
+  }
+
   var outMio=Math.round(TOT - S0*sv/100 - B0*bv/100 - I0*iv/100);
-  var outPct=parseFloat(((outMio/TOT)*100).toFixed(1));
+  var outPct = forcedOutPct !== null ? parseFloat(forcedOutPct.toFixed(1)) : parseFloat(((outMio/TOT)*100).toFixed(1));
   document.getElementById('ss-pct').textContent=sv.toFixed(1)+'%'; document.getElementById('ss-bar').style.width=sv.toFixed(1)+'%'; document.getElementById('ss-mio').textContent=Math.round(S0*sv/100)+' Mio EUR verbleibend';
   document.getElementById('sb-pct').textContent=bv.toFixed(1)+'%'; document.getElementById('sb-bar').style.width=bv.toFixed(1)+'%'; document.getElementById('sb-mio').textContent=Math.round(B0*bv/100)+' Mio EUR verbleibend';
   document.getElementById('si-pct').textContent=iv.toFixed(1)+'%'; document.getElementById('si-bar').style.width=iv.toFixed(1)+'%'; document.getElementById('si-mio').textContent=Math.round(I0*iv/100)+' Mio EUR verbleibend';
   document.getElementById('tot-out-mio').textContent=outMio+' Mio EUR';
   document.getElementById('tot-out-pct').textContent=outPct+'% des Gesamtportfolios';
-  var hh=Math.floor(t), mm=Math.round((t%1)*60);
-  document.getElementById('run-time-disp').textContent='T+'+hh+'h '+(mm<10?'0':'')+mm+'min';
+  document.getElementById('run-time-disp').textContent=fmtRunTime(t);
   document.getElementById('run-time-slider').value=Math.floor(t);
-  var lvl=updateStatusAlert(outPct, type);
+  var lvl=updateStatusAlert(outPct, type, t);
   setBankState(outPct/100, lvl);
 }
 
@@ -777,8 +959,8 @@ function runFrame(ts) {
   var stepMs = parseInt(document.getElementById('cfg-spd').value) || 300;
   window._runStep += elapsed / stepMs;
   runLastTs = ts;
-  if (window._runStep >= 48) {
-    window._runStep = 48; _applyTime(48);
+  if (window._runStep >= getRunTimeline().max) {
+    window._runStep = getRunTimeline().max; _applyTime(getRunTimeline().max);
     isRun=false; runRafId=null;
     document.getElementById('run-btn').textContent='✓ Fertig';
     document.getElementById('run-btn').className='btn';
@@ -794,7 +976,7 @@ function toggleRun() {
     document.getElementById('run-btn').textContent='▶ Fortsetzen';
     document.getElementById('run-btn').className='btn';
   } else {
-    if (window._runStep >= 48) { window._runStep=0; _applyTime(0); }
+    if (window._runStep >= getRunTimeline().max) { window._runStep=0; _applyTime(0); }
     isRun=true; runLastTs=null;
     document.getElementById('run-btn').textContent='⏸ Pause';
     document.getElementById('run-btn').className='btn btn-warn';
@@ -817,7 +999,8 @@ function resetRun() {
   document.getElementById('si-mio').textContent=I0+' Mio EUR verbleibend';
   document.getElementById('tot-out-mio').textContent='0 Mio EUR';
   document.getElementById('tot-out-pct').textContent='0% des Gesamtportfolios';
-  document.getElementById('run-time-disp').textContent='T+0h';
+  updateRunTimelineUI();
+  document.getElementById('run-time-disp').textContent=fmtRunTime(0);
   document.getElementById('run-time-slider').value=0;
   updateStatusAlert(0, document.getElementById('cfg-type').value);
   setBankState(0, 0);
@@ -891,30 +1074,37 @@ function drawBankStress() {
     ctx.strokeStyle='rgba(180,220,255,'+(0.3+s2*0.3)+')'; ctx.lineWidth=2; ctx.stroke();
   }
   // Building
-  var tilt=s2>0.5?(s2-0.5)*0.28:0, sinkY=s2*H*0.52, bW2=138, bH2=98;
-  ctx.save(); ctx.translate(W/2,gY+sinkY); ctx.rotate(tilt);
+  var tilt=s2>0.5?(s2-0.5)*0.28:0, sinkY=s2*H*0.52, bW2=190, bH2=135;
+  ctx.save(); ctx.translate(W/2,gY-22+sinkY); ctx.rotate(tilt);
   ctx.save(); ctx.shadowColor='rgba(0,0,0,.18)'; ctx.shadowBlur=14; ctx.shadowOffsetY=5;
-  for(var st=0;st<3;st++){rrect(ctx,-bW2/2-st*8+2,bH2-st*7,bW2+st*16-4,8,3); ctx.fillStyle=stg>=3?'hsl(0,25%,'+(68-st*4)+'%)':'hsl(225,35%,'+(78-st*4)+'%)'; ctx.fill(); ctx.strokeStyle=stg>=3?'#ccaaaa':'#a0b2dc'; ctx.lineWidth=2; ctx.stroke();}
-  rrect(ctx,-bW2/2,-bH2,bW2,bH2+22,6);
+  rrect(ctx,-bW2/2,-bH2,bW2,bH2,6);
   var bG2=ctx.createLinearGradient(-bW2/2,-bH2,bW2/2,bH2);
   if(stg>=3){bG2.addColorStop(0,'#f0d8d8');bG2.addColorStop(1,'#e0c0c0');}else{bG2.addColorStop(0,'#dde8ff');bG2.addColorStop(1,'#c8d6f5');}
   ctx.fillStyle=bG2; ctx.fill(); ctx.restore();
   ctx.strokeStyle=stg>=3?'#cc8888':'#8899cc'; ctx.lineWidth=3; ctx.stroke();
-  for(var cc=0;cc<5;cc++){var cxx=-bW2/2+14+cc*(bW2-28)/4-5; rrect(ctx,cxx,-bH2+12,10,bH2-30,3); ctx.fillStyle=stg>=3?'#e8c8c8':'#c8d8f0'; ctx.fill(); ctx.strokeStyle=stg>=3?'#cc8888':'#9aaae0'; ctx.lineWidth=2; ctx.stroke(); rrect(ctx,cxx-3,-bH2+10,16,5,2); ctx.fillStyle=stg>=3?'#d8b0b0':'#b8ccec'; ctx.fill();}
-  ctx.beginPath(); ctx.moveTo(-bW2/2-8,-bH2+2); ctx.lineTo(0,-bH2-26); ctx.lineTo(bW2/2+8,-bH2+2); ctx.closePath();
+  // Attached plinth/base: overlaps the lower facade by 10px, so it remains visually connected during tilt/sink animation.
+  for(var st=0;st<3;st++){
+    var baseY = -10 + st*7;
+    rrect(ctx,-bW2/2-8-st*8,baseY,bW2+16+st*16,9,3);
+    ctx.fillStyle=stg>=3?'hsl(0,25%,'+(69-st*4)+'%)':'hsl(225,35%,'+(78-st*4)+'%)';
+    ctx.fill();
+    ctx.strokeStyle=stg>=3?'#ccaaaa':'#a0b2dc'; ctx.lineWidth=2; ctx.stroke();
+  }
+  for(var cc=0;cc<5;cc++){var cxx=-bW2/2+20+cc*(bW2-40)/4-7; rrect(ctx,cxx,-bH2+18,14,bH2-42,4); ctx.fillStyle=stg>=3?'#e8c8c8':'#c8d8f0'; ctx.fill(); ctx.strokeStyle=stg>=3?'#cc8888':'#9aaae0'; ctx.lineWidth=2; ctx.stroke(); rrect(ctx,cxx-4,-bH2+15,22,6,2); ctx.fillStyle=stg>=3?'#d8b0b0':'#b8ccec'; ctx.fill();}
+  ctx.beginPath(); ctx.moveTo(-bW2/2-8,-bH2+2); ctx.lineTo(0,-bH2-36); ctx.lineTo(bW2/2+8,-bH2+2); ctx.closePath();
   ctx.fillStyle=stg>=3?'#e8c0c0':'#bccce8'; ctx.fill(); ctx.strokeStyle=stg>=3?'#bb7777':'#7088cc'; ctx.lineWidth=3; ctx.stroke();
   var winC=stg>=3?'rgba(255,160,120,.8)':'rgba(180,220,255,.85)', winBC=stg>=3?'#cc6666':'#6699cc';
-  [[-45,-bH2+22],[-15,-bH2+22],[15,-bH2+22],[45,-bH2+22],[-45,-bH2+50],[-15,-bH2+50],[15,-bH2+50],[45,-bH2+50]].forEach(function(wp2){var wx2=wp2[0],wy2=wp2[1]; rrect(ctx,wx2-8,wy2,16,14,3);ctx.fillStyle=winC;ctx.fill();ctx.strokeStyle=winBC;ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.moveTo(wx2-6,wy2+2);ctx.lineTo(wx2-2,wy2+2);ctx.lineTo(wx2-5,wy2+5);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();});
-  rrect(ctx,-11,bH2-36,22,27,4); ctx.fillStyle=stg>=3?'#c08080':'#8090c8'; ctx.fill(); ctx.strokeStyle=stg>=3?'#aa5555':'#5060a8'; ctx.lineWidth=2.5; ctx.stroke();
-  ctx.beginPath(); ctx.arc(7,bH2-22,2.5,0,Math.PI*2); ctx.fillStyle='#ffd700'; ctx.fill();
+  [[-64,-bH2+30],[-22,-bH2+30],[22,-bH2+30],[64,-bH2+30],[-64,-bH2+68],[-22,-bH2+68],[22,-bH2+68],[64,-bH2+68]].forEach(function(wp2){var wx2=wp2[0],wy2=wp2[1]; rrect(ctx,wx2-12,wy2,24,20,4);ctx.fillStyle=winC;ctx.fill();ctx.strokeStyle=winBC;ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.moveTo(wx2-9,wy2+3);ctx.lineTo(wx2-3,wy2+3);ctx.lineTo(wx2-8,wy2+8);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();});
+  rrect(ctx,-16,-50,32,46,5); ctx.fillStyle=stg>=3?'#c08080':'#8090c8'; ctx.fill(); ctx.strokeStyle=stg>=3?'#aa5555':'#5060a8'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(10,-28,3.2,0,Math.PI*2); ctx.fillStyle='#ffd700'; ctx.fill();
   if(s2>0.45){var ca2=Math.min(1,(s2-0.45)*2); ctx.strokeStyle='rgba(160,60,60,'+ca2*0.7+')'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(-25,-bH2+35); ctx.lineTo(-14,-bH2+52); ctx.lineTo(-22,-bH2+64); ctx.stroke(); ctx.beginPath(); ctx.moveTo(28,-bH2+44); ctx.lineTo(18,-bH2+58); ctx.lineTo(25,-bH2+72); ctx.stroke();}
-  ctx.font='bold 13px "Segoe UI",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='bold 18px "Segoe UI",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.lineWidth=4; ctx.strokeText('BANK',0,-bH2+9);
   ctx.fillStyle=stg>=3?'#a03030':'#3a4ea0'; ctx.fillText('BANK',0,-bH2+9);
   ctx.restore();
   // Emote
   var emotes=[null,'\u{1F61F}','\u{1F630}','\u{1F631}','\u{1F480}'];
-  if(stg>=1 && emotes[Math.min(stg,4)]){ctx.font='26px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(emotes[Math.min(stg,4)],W/2,gY+sinkY-bH2-42+Math.sin(bankWave*1.5)*5);}
+  if(stg>=1 && emotes[Math.min(stg,4)]){ctx.font='26px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(emotes[Math.min(stg,4)],W/2,gY-22+sinkY-bH2-58+Math.sin(bankWave*1.5)*5);}
   // Stage badge
   var type3=document.getElementById('cfg-type').value, m3=EVENT_MODELS[type3];
   var sC=['#3d5fe0','#7c5cdb','#c08000','#e06b1a','#d93030'];
@@ -925,7 +1115,7 @@ function drawBankStress() {
   ctx.fillText(sEmoji2[si]+' '+m3.stages[si], W-92, 21);
   // Particles
   if(s2>0.05 && bankParticles.length<200 && Math.random()<s2*0.5)
-    bankParticles.push(new EuroNote(W/2+(Math.random()-0.5)*bW2*0.7, gY+sinkY-bH2*0.3+s2*H*0.25));
+    bankParticles.push(new EuroNote(W/2+(Math.random()-0.5)*bW2*0.7, gY-22+sinkY-bH2*0.3+s2*H*0.25));
   bankParticles = bankParticles.filter(function(p){ p.update(); p.draw(ctx); return p.life>0; });
 }
 
@@ -946,6 +1136,88 @@ function startBankAnim() {
 
 function stopBankAnim() { if(bankRafId){ cancelAnimationFrame(bankRafId); bankRafId=null; } }
 function setBankState(stress, stage) { bankStress=stress; bankStageVis=stage; }
+
+
+/* === Dashboard DOM-Umbau: bestehende Komponenten wirklich neu anordnen === */
+(function(){
+  function el(tag, cls){var e=document.createElement(tag); if(cls)e.className=cls; return e;}
+  function move(parent,node){if(node) parent.appendChild(node); return node;}
+  function makeHead(scene, mini){
+    var head=el('div','dash-head');
+    var wrap=el('div','dash-title-wrap');
+    var tag=scene.querySelector(':scope > .scene-tag');
+    var title=scene.querySelector(':scope > .scene-title');
+    var sub=scene.querySelector(':scope > .scene-sub');
+    var dtag=el('div','dash-tag'); dtag.textContent=tag?tag.textContent:'';
+    var dt=el('div','dash-title'); dt.textContent=title?title.textContent:'';
+    var ds=el('div','dash-sub'); ds.textContent=sub?sub.textContent:'';
+    wrap.appendChild(dtag); wrap.appendChild(dt); wrap.appendChild(ds);
+    var m=el('div','dash-mini'); m.innerHTML=mini||'';
+    head.appendChild(wrap); head.appendChild(m);
+    return head;
+  }
+  function buildLCR(){
+    var scene=document.getElementById('s0'); if(!scene || scene.querySelector('.dash-lcr')) return;
+    var oldGrid=scene.querySelector(':scope > .grid2'); if(!oldGrid) return;
+    var first=oldGrid.children[0], second=oldGrid.children[1];
+    var sliderCard=first?first.querySelector('.card'):null;
+    var gaugeCard=first?first.querySelectorAll('.card')[1]:null;
+    var vizCard=second?second.querySelector('.card'):null;
+    var compare=second?second.querySelector('.scn-compare'):null;
+    var info=second?second.querySelector('.info-box'):null;
+    var preset=scene.querySelector(':scope > .preset-row');
+
+    var dash=el('div','dashboard dash-lcr');
+    dash.appendChild(makeHead(scene,'Ziel: Ein Screen · Animation im Zentrum · Parameter links/rechts'));
+    var cols=el('div','dash-cols'); var left=el('aside','dash-col dash-left'); var center=el('main','dash-col dash-center'); var right=el('aside','dash-col dash-right lcr-side-stack');
+
+    var leftPanel=el('div','dash-panel compact');
+    var ltitle=el('div','dash-panel-title'); ltitle.textContent='Parameter'; leftPanel.appendChild(ltitle);
+    move(leftPanel,preset); move(leftPanel,sliderCard); left.appendChild(leftPanel);
+
+    if(vizCard){vizCard.classList.add('lcr-animation-card'); center.appendChild(vizCard); var leg=vizCard.querySelector('[style*="justify-content:space-between"]'); if(leg) leg.classList.add('lcr-legend');}
+    if(gaugeCard){gaugeCard.classList.add('lcr-kpi-card'); right.appendChild(gaugeCard);} 
+    if(compare) right.appendChild(compare); if(info) right.appendChild(info);
+    cols.appendChild(left); cols.appendChild(center); cols.appendChild(right); dash.appendChild(cols); scene.appendChild(dash);
+  }
+  function buildRun(){
+    var scene=document.getElementById('s1'); if(!scene || scene.querySelector('.dash-run')) return;
+    var all=Array.prototype.slice.call(scene.children);
+    var runBtn=document.getElementById('run-btn'); var controls=runBtn?runBtn.closest('div'):null; if(controls) controls.classList.add('run-controls');
+    var scrub=scene.querySelector(':scope > .scrubber-wrap');
+    var snap=scene.querySelector(':scope > .snap-row');
+    var stages=scene.querySelector(':scope > .stages');
+    var cfg=scene.querySelector(':scope > .cfg-panel');
+    var casePanel=document.getElementById('case-factbox'); casePanel=casePanel?casePanel.closest('div[style*="box-shadow"]'):null; if(casePanel) casePanel.classList.add('case-panel');
+    var chart=document.getElementById('c5'); var chartPanel=chart?chart.closest('div[style*="box-shadow"]'):null; if(chartPanel) chartPanel.classList.add('run-chart-panel','dash-panel');
+    var bank=document.getElementById('bank-canvas'); var bankPanel=bank?bank.parentElement:null; if(bankPanel) bankPanel.classList.add('bank-animation-panel','dash-panel');
+    var grid=scene.querySelector(':scope > .grid2'); var rightOriginal=grid?grid.children[1]:null;
+
+    var dash=el('div','dashboard dash-run'); dash.appendChild(makeHead(scene,'Bank-Run: links Ereignis/Parameter · Mitte Animation · rechts Wirkung'));
+    var cols=el('div','dash-cols'); var left=el('aside','dash-col dash-left run-left-tools'); var center=el('main','dash-col dash-center'); var right=el('aside','dash-col dash-right run-right');
+    move(left,controls); move(left,scrub); move(left,snap); move(left,stages); move(left,casePanel); move(left,cfg);
+    move(center,bankPanel); move(center,chartPanel);
+    if(rightOriginal){Array.prototype.slice.call(rightOriginal.children).forEach(function(n){right.appendChild(n);});}
+    cols.appendChild(left); cols.appendChild(center); cols.appendChild(right); dash.appendChild(cols); scene.appendChild(dash);
+  }
+  function resizeDashboardCanvases(){
+    var l=document.getElementById('lcr-canvas');
+    if(l){l.width=Math.max(340,Math.floor(l.getBoundingClientRect().width));l.height=Math.max(320,Math.floor(l.getBoundingClientRect().height));l._sz=true;}
+    var b=document.getElementById('bank-canvas');
+    if(b){b.width=Math.max(340,Math.floor(b.getBoundingClientRect().width));b.height=Math.max(300,Math.floor(b.getBoundingClientRect().height));}
+  }
+  var oldGo=window.go;
+  window.go=function(n){ if(oldGo) oldGo(n); buildLCR(); buildRun(); setTimeout(resizeDashboardCanvases,30); };
+  var oldStartBankAnim=window.startBankAnim;
+  window.startBankAnim=function(){
+    if (bankRafId) { cancelAnimationFrame(bankRafId); bankRafId=null; }
+    resizeDashboardCanvases(); bankAnimLoop();
+  };
+  var oldStartLCRAnim=window.startLCRAnim;
+  window.startLCRAnim=function(){ if(!lcrRafId){resizeDashboardCanvases(); lcrAnimLoop();} };
+  window.addEventListener('resize',function(){setTimeout(resizeDashboardCanvases,80);});
+  buildLCR(); buildRun(); updateRunTimelineUI(); setTimeout(function(){resizeDashboardCanvases(); calcLCR(); if(typeof drawLCRBank==='function')drawLCRBank(); if(typeof drawBankStress==='function')drawBankStress();},120);
+})();
 </script>
 </body>
 </html>
